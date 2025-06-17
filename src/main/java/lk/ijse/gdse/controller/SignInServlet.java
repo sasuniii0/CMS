@@ -1,4 +1,4 @@
-package lk.ijse.gdse;
+package lk.ijse.gdse.controller;
 
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
@@ -12,9 +12,9 @@ import java.io.IOException;
 public class SignInServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        req.getParameter("username");
-        req.getParameter("password");
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
 
-        System.out.println("username: " + req.getParameter("username") + " password: " + req.getParameter("password"));
+        System.out.println("email: " + email + " password: " + password);
     }
 }
