@@ -33,18 +33,15 @@ public class SignInServlet extends HttpServlet {
         if (!user) {
             resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
             return;
-        }else {
+        } else {
             System.out.println("User authenticated successfully");
+
+            req.getSession().setAttribute("email", email);
+            req.getSession().setAttribute("role", role);
+
             resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
         }
-
-        req.getSession().setAttribute("userEmail", email);
-        req.getSession().setAttribute("userRole", role);
-
-        System.out.println("User authenticated: " + email + ", role: " + role);
-
-
-        System.out.println("email: " + email + " password: " + password);
+        System.out.println("email: " + email + " password: " + password + " role: " + role);
     }
 
 }
