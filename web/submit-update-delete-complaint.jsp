@@ -189,7 +189,7 @@
 <div class="modal fade" id="addComplaintModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="ComplaintServlet?action=save" method="post" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/complaint?action=save" method="post" enctype="multipart/form-data">
                 <div class="modal-header text-white">
                     <h5 class="modal-title fw-bold text-uppercase">
                         📝 Submit a New Complaint
@@ -225,7 +225,7 @@
 <div class="modal fade" id="editComplaintModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="ComplaintServlet?action=update" method="post" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/complaint?action=update" method="post" enctype="multipart/form-data">
                 <div class="modal-header  text-dark">
                     <h5 class="modal-title fw-bold text-uppercase">
                         ✏️ Edit Complaint
@@ -273,7 +273,7 @@
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="ComplaintServlet?action=delete" method="post">
+            <form action="${pageContext.request.contextPath}/complaint?action=delete" method="post">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title fw-bold text-uppercase">
                         ❗ Confirm Delete
