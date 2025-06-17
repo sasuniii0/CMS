@@ -25,16 +25,15 @@
 
         body {
             background:
-                    linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)),
-                    linear-gradient(135deg, #1a1a2e 0%, #16213e 100%) fixed;
+                    linear-gradient(rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.05)),
+                    linear-gradient(135deg, #667eea 0%, #764ba2 100%) fixed;
             backdrop-filter: blur(12px);
             -webkit-backdrop-filter: blur(12px);
             min-height: 100vh;
-            color: #f0f0f0;
+            color: white;
             padding-top: 3rem;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
         }
-
 
         .glass-card {
             background: var(--glass-color);
@@ -144,8 +143,8 @@
             <h2 class="mb-4"><i class="bi bi-person me-2"></i>Employee Actions</h2>
 
             <div class="col-md-4">
-                <a href="submit-complaint.jsp" class="text-decoration-none">
-                    <div class="action-card">
+                <a href="submit-update-delete-complaint.jsp" class="text-decoration-none">
+                    <div class="action-card" id="submit">
                         <h4><i class="bi bi-plus-circle me-2"></i>Submit Complaint</h4>
                         <p class="mb-0 text-white-50">Create a new complaint ticket</p>
                     </div>
@@ -153,8 +152,8 @@
             </div>
 
             <div class="col-md-4">
-                <a href="my-complaints.jsp" class="text-decoration-none">
-                    <div class="action-card">
+                <a href="submit-update-delete-complaint.jsp" class="text-decoration-none">
+                    <div class="action-card" id="view">
                         <h4><i class="bi bi-collection me-2"></i>My Complaints</h4>
                         <p class="mb-0 text-white-50">View your submitted complaints</p>
                     </div>
@@ -162,8 +161,8 @@
             </div>
 
             <div class="col-md-4">
-                <a href="edit-complaint.jsp" class="text-decoration-none">
-                    <div class="action-card">
+                <a href="submit-update-delete-complaint.jsp" class="text-decoration-none">
+                    <div class="action-card" id="update">
                         <h4><i class="bi bi-pencil me-2"></i>Edit/Delete</h4>
                         <p class="mb-0 text-white-50">Manage your existing complaints</p>
                     </div>
@@ -183,5 +182,6 @@
 </div>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
 </body>
 </html>
