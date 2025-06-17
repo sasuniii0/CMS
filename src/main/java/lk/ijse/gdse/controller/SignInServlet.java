@@ -5,6 +5,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.HttpSession;
 import lk.ijse.gdse.dto.UserDTO;
 import lk.ijse.gdse.model.UserModel;
 import org.apache.commons.dbcp2.BasicDataSource;
@@ -36,6 +37,13 @@ public class SignInServlet extends HttpServlet {
             System.out.println("User authenticated successfully");
             resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
         }
+
+        HttpSession session = req.getSession();
+        session.setAttribute("email", email);
+        session.setAttribute("role", role);
+
+        System.out.println("User authenticated: " + email + ", role: " + role);
+
 
         System.out.println("email: " + email + " password: " + password);
     }
