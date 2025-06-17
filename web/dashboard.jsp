@@ -152,7 +152,7 @@
             </div>
 
             <div class="col-md-4">
-                <a href="submit-update-delete-complaint.jsp" class="text-decoration-none">
+                <a href="view.jsp" class="text-decoration-none">
                     <div class="action-card" id="view">
                         <h4><i class="bi bi-collection me-2"></i>My Complaints</h4>
                         <p class="mb-0 text-white-50">View your submitted complaints</p>
