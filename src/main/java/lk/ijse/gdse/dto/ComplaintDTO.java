@@ -13,5 +13,6 @@ public class ComplaintDTO {
     private String image;
     private String description;
     private String status;
+    private String remarks;
     private String user_id;
 }
