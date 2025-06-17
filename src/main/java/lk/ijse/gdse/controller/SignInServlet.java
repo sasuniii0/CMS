@@ -38,9 +38,8 @@ public class SignInServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
         }
 
-        HttpSession session = req.getSession();
-        session.setAttribute("email", email);
-        session.setAttribute("role", role);
+        req.getSession().setAttribute("userEmail", email);
+        req.getSession().setAttribute("userRole", role);
 
         System.out.println("User authenticated: " + email + ", role: " + role);
 
