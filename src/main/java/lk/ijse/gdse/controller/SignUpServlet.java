@@ -41,24 +41,4 @@ public class SignUpServlet extends HttpServlet {
 
         System.out.println("email: " + email + " fullName: " + fullName + " password: " + password + " role: " + role);
     }
-    /*@Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
-        String id = UUID.randomUUID().toString();
-        String email = req.getParameter("email");
-        String fullName = req.getParameter("username");
-        String password = req.getParameter("password");
-        String role = req.getParameter("role");
-
-        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
-
-        boolean isSaved= UserModel.saveUser(new UserDTO(id, email, fullName, password, role), ds);
-        if (isSaved) {
-            resp.sendRedirect(req.getContextPath() + "/login.jsp");
-        } else {
-            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
-        }
-
-
-        System.out.println("email: " + email + " fullName: " + fullName + " password: " + password + " role: " + role);
-    }*/
 }
