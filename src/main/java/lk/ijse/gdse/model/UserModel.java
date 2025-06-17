@@ -7,6 +7,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.UUID;
 
 public class UserModel {
     public static boolean findUser(UserDTO userDTO, String role, BasicDataSource ds) {
@@ -31,10 +32,10 @@ public class UserModel {
         try{
             Connection connection = ds.getConnection();
             PreparedStatement pstm = connection.prepareStatement(
-                    "INSERT INTO users (id, username, email, password,role) VALUES (?,?,?,?,?)");
-            pstm.setString(1, userDTO.getId());
-            pstm.setString(2, userDTO.getUsername());
-            pstm.setString(3, userDTO.getEmail());
+                    "INSERT INTO users (uid, username, email, password,role) VALUES (?,?,?,?,?)");
+            pstm.setString(1, UUID.randomUUID().toString());
+            pstm.setString(2, userDTO.getEmail());
+            pstm.setString(3, userDTO.getUsername());
             pstm.setString(4, userDTO.getPassword());
             pstm.setString(5, userDTO.getRole());
             int i = pstm.executeUpdate();

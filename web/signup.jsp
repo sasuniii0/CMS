@@ -71,15 +71,15 @@
     <div class="container">
       <div class="glass-card">
         <h2>Create an Account</h2>
-        <form method="get" action="/signup">
+        <form method="post" action="${pageContext.request.contextPath}/signup">
           <div class="mb-3">
-            <label for="fullName" class="form-label">Full Name</label>
+            <label for="username" class="form-label"> Username</label>
             <input
               type="text"
               class="form-control"
-              id="fullName"
+              id="username"
               placeholder="John Doe"
-              name="fullName"
+              name="username"
               required
             />
           </div>
@@ -131,9 +131,7 @@
             </select>
           </div>
 
-          <button type="submit" class="btn btn-info w-100 text-white">
-            Sign Up
-          </button>
+          <button type="submit" class="btn btn-info w-100 text-white">Sign Up</button>
         </form>
       </div>
     </div>

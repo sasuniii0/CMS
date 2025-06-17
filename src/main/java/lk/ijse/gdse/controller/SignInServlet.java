@@ -13,7 +13,7 @@ import java.io.IOException;
 
 @WebServlet("/signin")
 public class SignInServlet extends HttpServlet {
-    @Override
+    /*@Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
         String email = req.getParameter("email");
         String password = req.getParameter("password");
@@ -38,5 +38,37 @@ public class SignInServlet extends HttpServlet {
         }
 
         System.out.println("email: " + email + " password: " + password);
+    }*/
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        String email = req.getParameter("email");
+        String password = req.getParameter("password");
+
+        if (email == null || password == null) {
+            resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing parameters");
+            return;
+        }
+
+        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
+
+        String role = UserModel.getRole(email, ds);
+        boolean user = UserModel.findUser(new UserDTO(email, password, role), role, ds);
+        System.out.println("user found: " + user);
+
+        if (!user) {
+            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+            return;
+        }
+
+        if ("admin".equals(role)) {
+            resp.sendRedirect(req.getContextPath() + "/admin.jsp");
+        } else if ("employee".equals(role)) {
+            resp.sendRedirect(req.getContextPath() + "/employee.jsp");
+        } else {
+            resp.sendError(HttpServletResponse.SC_UNAUTHORIZED);
+        }
+
+        System.out.println("email: " + email + " password: " + password);
     }
+
 }
