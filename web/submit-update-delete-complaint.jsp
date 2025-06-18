@@ -1,4 +1,11 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page import="lk.ijse.gdse.dto.ComplaintDTO" %>
+<%@ page import="java.util.List" %>
+
+<%
+    List<ComplaintDTO> complaints = (List<ComplaintDTO>) request.getAttribute("complaints");
+    request.setAttribute("complaints", complaints);
+%>
 <!DOCTYPE html>
 <html lang="en">
 <head>

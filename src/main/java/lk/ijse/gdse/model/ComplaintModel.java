@@ -12,42 +12,6 @@ import java.util.List;
 import java.util.UUID;
 
 public class ComplaintModel {
-    /*public static List<ComplaintDTO> fetchComplaintsByEmployee(ComplaintDTO complaintDTO, String email, String role, BasicDataSource ds)
-            throws SQLException {
-
-        List<ComplaintDTO> complaints = new ArrayList<>();
-        String sql;
-
-        if ("admin".equalsIgnoreCase(role)) {
-            sql = "SELECT * FROM complaints";
-        } else {
-            sql = "SELECT * FROM complaints WHERE user_id = ?";
-        }
-
-        try (Connection connection = ds.getConnection();
-             PreparedStatement pstm = connection.prepareStatement(sql)) {
-
-            if (!"admin".equalsIgnoreCase(role)) {
-                pstm.setString(1, email);
-            }
-
-            try (ResultSet rst = pstm.executeQuery()) {
-                while (rst.next()) {
-                    ComplaintDTO complaint = new ComplaintDTO();
-                    complaint.setCid(rst.getString("cid"));
-                    complaint.setTitle(rst.getString("title"));
-                    complaint.setImage(rst.getString("image"));
-                    complaint.setDescription(rst.getString("description"));
-                    complaint.setStatus(rst.getString("status"));
-                    complaint.setRemarks(rst.getString("remarks"));
-                    complaint.setUser_id(rst.getString("user_id"));
-                    complaints.add(complaint);
-                }
-            }
-        }
-        return complaints;
-    }*/
-
     public static boolean submitComplaint(ComplaintDTO complaint, BasicDataSource ds) {
         try{
             Connection connection = ds.getConnection();
@@ -102,5 +66,42 @@ public class ComplaintModel {
             throw new RuntimeException(e);
         }
         return complaints;
+    }
+
+    public static boolean updateComplaint(ComplaintDTO complaint, BasicDataSource ds) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(
+                     "UPDATE complaints SET title = ?, description = ?, status = ?, remarks = ? " +
+                             (complaint.getImage() != null ? ", image = ? " : "") +
+                             "WHERE cid = ?")) {
+
+            int paramIndex = 1;
+            pstm.setString(paramIndex++, complaint.getTitle());
+            pstm.setString(paramIndex++, complaint.getDescription());
+            pstm.setString(paramIndex++, complaint.getStatus());
+            pstm.setString(paramIndex++, complaint.getRemarks());
+
+            if (complaint.getImage() != null) {
+                pstm.setString(paramIndex++, complaint.getImage());
+            }
+
+            pstm.setString(paramIndex, complaint.getCid());
+
+            return pstm.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static boolean deleteComplaint(String cid, BasicDataSource ds) {
+        try (Connection connection = ds.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(
+                     "DELETE FROM complaints WHERE cid = ?")) {
+
+            pstm.setString(1, cid);
+            return pstm.executeUpdate() > 0;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }
