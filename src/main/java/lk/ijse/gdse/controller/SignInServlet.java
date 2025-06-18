@@ -36,8 +36,13 @@ public class SignInServlet extends HttpServlet {
         } else {
             System.out.println("User authenticated successfully");
 
-            req.getSession().setAttribute("email", email);
-            req.getSession().setAttribute("role", role);
+            int userId = UserModel.getUserIdByEmail(email, ds);
+            System.out.println("Fetched userId: " + userId);
+
+            HttpSession session = req.getSession();
+            session.setAttribute("email", email);
+            session.setAttribute("role", role);
+            session.setAttribute("user_id", userId);
 
             resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
         }

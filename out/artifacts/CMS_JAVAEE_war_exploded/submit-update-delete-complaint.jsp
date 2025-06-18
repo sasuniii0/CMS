@@ -161,8 +161,8 @@
                                 <button class="btn btn-sm btn-outline-primary edit-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#editComplaintModal"
-                                        data-id="${complaint.id}"
-                                        data-userid="${complaint.userId}"
+                                        data-id="${complaint.cid}"
+                                        data-userid="${complaint.user_id}"
                                         data-title="${complaint.title}"
                                         data-description="${complaint.description}"
                                         data-status="${complaint.status}"
@@ -172,7 +172,7 @@
                                 <button class="btn btn-sm btn-outline-danger delete-btn"
                                         data-bs-toggle="modal"
                                         data-bs-target="#deleteModal"
-                                        data-id="${complaint.id}">
+                                        data-id="${complaint.cid}">
                                     <i class="bi bi-trash"></i>
                                 </button>
                             </td>

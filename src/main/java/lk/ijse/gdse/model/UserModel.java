@@ -63,4 +63,20 @@ public class UserModel {
         }
         return null;
     }
+
+    public static int getUserIdByEmail(String email, BasicDataSource ds) {
+        try (Connection con = ds.getConnection();
+             PreparedStatement stm = con.prepareStatement("SELECT uid FROM users WHERE email = ?")) {
+            stm.setString(1, email);
+            ResultSet rs = stm.executeQuery();
+            if (rs.next()) {
+                return rs.getInt("uid");
+            } else {
+                throw new SQLException("User ID not found for email: " + email);
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return -1;
+        }
+    }
 }
