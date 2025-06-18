@@ -143,7 +143,7 @@
             <h2 class="mb-4"><i class="bi bi-person me-2"></i>Employee Actions</h2>
 
             <div class="col-md-4">
-                <a href="submit-update-delete-complaint.jsp" class="text-decoration-none">
+                <a href="submit-complaint.jsp" class="text-decoration-none">
                     <div class="action-card" id="submit">
                         <h4><i class="bi bi-plus-circle me-2"></i>Submit Complaint</h4>
                         <p class="mb-0 text-white-50">Create a new complaint ticket</p>
@@ -161,7 +161,7 @@
             </div>
 
             <div class="col-md-4">
-                <a href="submit-update-delete-complaint.jsp" class="text-decoration-none">
+                <a href="edit-complaint.jsp" class="text-decoration-none">
                     <div class="action-card" id="update">
                         <h4><i class="bi bi-pencil me-2"></i>Edit/Delete</h4>
                         <p class="mb-0 text-white-50">Manage your existing complaints</p>

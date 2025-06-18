@@ -23,40 +23,41 @@ public class UpdateComplaintServlet extends HttpServlet {
             return;
         }
 
-        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
-        String cid = req.getParameter("id");
+        String cid = req.getParameter("cid");  // fix: not "id" → should be "cid" to match the form
         String title = req.getParameter("title");
         String description = req.getParameter("description");
         String status = req.getParameter("status");
         String remarks = req.getParameter("remarks");
-        Integer userId = (Integer) session.getAttribute("user_id");
+        String userId = String.valueOf(session.getAttribute("user_id"));
+
+        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
 
         try {
-            // Validate required fields
+            // Validate
             if (cid == null || title == null || description == null || status == null) {
-                req.setAttribute("error", "All required fields must be provided");
+                req.setAttribute("error", "All required fields must be provided.");
                 ComplaintDTO exist = ComplaintModel.getComplaintById(cid, ds);
                 req.setAttribute("complaint", exist);
-                req.getRequestDispatcher("/update-complaint.jsp").forward(req, resp);
+                req.getRequestDispatcher("/edit-complaint.jsp").forward(req, resp);
                 return;
             }
 
-            // Check permission
-            if (!ComplaintModel.canUserUpdate(cid, userId.toString(), ds)) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
+            // Permission check
+            if (!ComplaintModel.canUserUpdate(cid, userId, ds)) {
+                resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
                 return;
             }
 
-            // Create DTO
+            // Prepare DTO
             ComplaintDTO complaint = new ComplaintDTO();
             complaint.setCid(cid);
             complaint.setTitle(title.trim());
             complaint.setDescription(description.trim());
             complaint.setStatus(status.trim());
             complaint.setRemarks(remarks != null ? remarks.trim() : "");
-            complaint.setUser_id(userId.toString());
+            complaint.setUser_id(userId);
 
-            // Handle file upload if present
+            // Optional: File upload
             Part filePart = req.getPart("image");
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = UUID.randomUUID() + "_" + filePart.getSubmittedFileName();
@@ -67,24 +68,32 @@ public class UpdateComplaintServlet extends HttpServlet {
                 String filePath = uploadPath + File.separator + fileName;
                 filePart.write(filePath);
                 complaint.setImage("assets/" + fileName);
+            } else {
+                // Preserve existing image if new one not uploaded
+                ComplaintDTO existing = ComplaintModel.getComplaintById(cid, ds);
+                if (existing != null) {
+                    complaint.setImage(existing.getImage());
+                }
             }
 
-            boolean isUpdated = ComplaintModel.updateComplaint(complaint, ds);
-            if (isUpdated) {
+            // Update
+            boolean updated = ComplaintModel.updateComplaint(complaint, ds);
+            if (updated) {
                 resp.sendRedirect(req.getContextPath() + "/viewMyComplaints");
             } else {
-                req.setAttribute("error", "Failed to update complaint");
-                ComplaintDTO exist = ComplaintModel.getComplaintById(cid, ds);
-                req.setAttribute("complaint", exist);
-                req.getRequestDispatcher("/update-complaint.jsp").forward(req, resp);
+                req.setAttribute("error", "Failed to update complaint.");
+                req.setAttribute("complaint", complaint);
+                req.getRequestDispatcher("/edit-complaint.jsp").forward(req, resp);
             }
 
         } catch (Exception e) {
-            req.setAttribute("error", "Error updating complaint: " + e.getMessage());
-            req.getRequestDispatcher("/update-complaint.jsp").forward(req, resp);
+            e.printStackTrace();
+            req.setAttribute("error", "Unexpected error: " + e.getMessage());
+            ComplaintDTO fallback = ComplaintModel.getComplaintById(cid, ds);
+            req.setAttribute("complaint", fallback);
+            req.getRequestDispatcher("/edit-complaint.jsp").forward(req, resp);
         }
     }
-
 
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
@@ -93,34 +102,33 @@ public class UpdateComplaintServlet extends HttpServlet {
             resp.sendRedirect(req.getContextPath() + "/index.jsp");
             return;
         }
-        String id = req.getParameter("cid");
-        if (id == null) {
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+
+        String cid = req.getParameter("cid");
+        if (cid == null) {
+            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
             return;
         }
+
         try {
-            String cid = String.valueOf(Integer.parseInt(id));
-            String userId = (String) session.getAttribute("user_id");
+            String userId = String.valueOf(session.getAttribute("user_id"));
+            BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
 
-
-            if (!ComplaintModel.canUserUpdate(cid, userId, (BasicDataSource) req.getServletContext().getAttribute("ds"))) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
-                return;
-            }
-            ComplaintDTO exist = ComplaintModel.getComplaintById(cid, (BasicDataSource) req.getServletContext().getAttribute("ds"));
-            if (exist == null) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
+            if (!ComplaintModel.canUserUpdate(cid, userId, ds)) {
+                resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
                 return;
             }
 
-            req.setAttribute("complaint", exist);
-            req.getRequestDispatcher("/update-complaint.jsp").forward(req, resp);
-        } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
-        }
-        catch (Exception e) {
+            ComplaintDTO complaint = ComplaintModel.getComplaintById(cid, ds);
+            if (complaint == null) {
+                resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
+                return;
+            }
+
+            req.setAttribute("complaint", complaint);
+            req.getRequestDispatcher("/edit-complaint.jsp").forward(req, resp);
+        } catch (Exception e) {
             e.printStackTrace();
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
         }
     }
 }

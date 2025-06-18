@@ -36,7 +36,7 @@ public class UpdateStatusServlet extends HttpServlet {
             return;
         }
         req.setAttribute("complaint", complaintDTO);
-        req.getRequestDispatcher("updateStatus.jsp").forward(req, resp);
+        req.getRequestDispatcher("update-status.jsp").forward(req, resp);
     }
 
     @Override

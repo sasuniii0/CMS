@@ -115,9 +115,16 @@
     <div class="card-header text-white d-flex justify-content-between align-items-center">
       <h4 class="mb-0">My Complaints</h4>
       <%-- Add button to refresh complaints --%>
-      <a href="${pageContext.request.contextPath}/viewMyComplaints" class="btn btn-light btn-sm">
-        <i class="bi bi-arrow-clockwise"></i> Refresh
-      </a>
+
+      <div>
+        <a href="dashboard.jsp" class="btn btn-secondary me-md-2">
+          <i class="bi bi-arrow-left"></i> Back to Dashboard
+        </a>
+        <a href="${pageContext.request.contextPath}/viewMyComplaints" class="btn btn-info me-md-2">
+          <i class="bi bi-arrow-clockwise"></i> Refresh
+        </a>
+      </div>
+
     </div>
     <div class="card-body">
       <div class="table-responsive">

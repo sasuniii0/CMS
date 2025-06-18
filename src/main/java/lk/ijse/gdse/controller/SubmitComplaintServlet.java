@@ -30,7 +30,7 @@ public class SubmitComplaintServlet extends HttpServlet {
         }
         String role = req.getParameter("role");
         req.setAttribute("role", role);
-        req.getRequestDispatcher("/submit-update-delete-complaint.jsp").forward(req, resp);
+        req.getRequestDispatcher("/submit-complaint.jsp").forward(req, resp);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class SubmitComplaintServlet extends HttpServlet {
             if (title == null || title.trim().isEmpty() ||
                     description == null || description.trim().isEmpty()) {
                 req.setAttribute("error", "Title and description are required");
-                req.getRequestDispatcher("/submit-update-delete-complaint.jsp").forward(req, resp);
+                req.getRequestDispatcher("/submit-complaint.jsp").forward(req, resp);
                 return;
             }
 
@@ -80,12 +80,12 @@ public class SubmitComplaintServlet extends HttpServlet {
                 resp.sendRedirect(req.getContextPath() + "/viewMyComplaints");
             } else {
                 req.setAttribute("error", "Failed to submit complaint");
-                req.getRequestDispatcher("/submit-update-delete-complaint.jsp").forward(req, resp);
+                req.getRequestDispatcher("/submit-complaint.jsp").forward(req, resp);
             }
 
         } catch (Exception e) {
             req.setAttribute("error", "Error submitting complaint: " + e.getMessage());
-            req.getRequestDispatcher("/submit-update-delete-complaint.jsp").forward(req, resp);
+            req.getRequestDispatcher("/submit-complaint.jsp").forward(req, resp);
         }
     }
 }

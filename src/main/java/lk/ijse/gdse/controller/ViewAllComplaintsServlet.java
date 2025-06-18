@@ -22,7 +22,7 @@ public class ViewAllComplaintsServlet extends HttpServlet {
             BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
             List<ComplaintDTO> allComplaints = ComplaintModel.getAllComplaints(ds);
             req.setAttribute("allComplaints", allComplaints);
-            req.getRequestDispatcher("viewAllComplaints.jsp").forward(req, resp);
+            req.getRequestDispatcher("view-all-complaints.jsp").forward(req, resp);
         }catch (Exception e){
             e.printStackTrace();
         }
