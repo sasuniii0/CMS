@@ -152,6 +152,7 @@
                     <%
                     } else {
                         for (ComplaintDTO complaint : complaints) {
+                            String status = complaint.getStatus() == null ? "PENDING" : complaint.getStatus().toUpperCase();
                     %>
                     <tr>
                         <td><%= complaint.getTitle() %></td>
@@ -172,15 +173,15 @@
                                     : "" %>
                         </td>
                         <td>
-                  <span class="status-badge
-    <%= complaint.getStatus() == null ? "status-pending" :
-       complaint.getStatus().equals("PENDING") ? "status-pending" :
-       complaint.getStatus().equals("RESOLVED") ? "status-resolved" : "status-rejected" %>">
-    <%= complaint.getStatus() == null ? "PENDING" : complaint.getStatus() %>
-</span>
+      <span class="status-badge
+        <%= status.equals("PENDING") ? "status-pending" :
+            status.equals("RESOLVED") ? "status-resolved" : "status-rejected" %>">
+        <%= status %>
+      </span>
                         </td>
                         <td><%= complaint.getRemarks() != null ? complaint.getRemarks() : "" %></td>
-                        <td >
+                        <td>
+                            <% if (!"RESOLVED".equals(status)) { %>
                             <button class="btn btn-sm btn-outline-primary edit-btn"
                                     data-bs-toggle="modal"
                                     data-bs-target="#editComplaintModal"
@@ -188,7 +189,7 @@
                                     data-userid="<%= complaint.getUser_id() %>"
                                     data-title="<%= complaint.getTitle() %>"
                                     data-description="<%= complaint.getDescription() %>"
-                                    data-status="<%= complaint.getStatus() %>"
+                                    data-status="<%= status %>"
                                     data-remarks="<%= complaint.getRemarks() != null ? complaint.getRemarks() : "" %>">
                                 <i class="bi bi-pencil"></i> Edit
                             </button>
@@ -198,6 +199,14 @@
                                     data-id="<%= complaint.getCid() %>">
                                 <i class="bi bi-trash"></i> Delete
                             </button>
+                            <% } else { %>
+                            <button class="btn btn-sm btn-outline-secondary" disabled title="Cannot edit resolved complaint">
+                                <i class="bi bi-pencil"></i> Edit
+                            </button>
+                            <button class="btn btn-sm btn-outline-secondary" disabled title="Cannot delete resolved complaint">
+                                <i class="bi bi-trash"></i> Delete
+                            </button>
+                            <% } %>
                         </td>
                     </tr>
                     <%
@@ -205,6 +214,7 @@
                         }
                     %>
                     </tbody>
+
                 </table>
             </div>
         </div>
@@ -267,7 +277,7 @@
 <div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="${pageContext.request.contextPath}/delete-complaint" method="post">
+            <form action="${pageContext.request.contextPath}/delete-complaint" method="get">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title">Confirm Delete</h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
@@ -298,32 +308,36 @@
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
-    document.querySelectorAll('.edit-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.getElementById('editId').value = this.getAttribute('data-id');
-            document.getElementById('editUserId').value = this.getAttribute('data-userid');
-            document.getElementById('editTitle').value = this.getAttribute('data-title');
-            document.getElementById('editDescription').value = this.getAttribute('data-description');
-            document.getElementById('editStatus').value = this.getAttribute('data-status');
-            document.getElementById('editRemarks').value = this.getAttribute('data-remarks');
+    document.addEventListener('DOMContentLoaded', () => {
+        document.querySelectorAll('.edit-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                document.getElementById('editTitle').value = this.getAttribute('data-title') || '';
+                document.getElementById('editDescription').value = this.getAttribute('data-description') || '';
+                document.getElementById('editStatus').value = this.getAttribute('data-status') || 'PENDING';
+                document.getElementById('editRemarks').value = this.getAttribute('data-remarks') || '';
+            });
         });
+
+        document.querySelectorAll('.delete-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const deleteIdInput = document.getElementById('deleteId');
+                if (deleteIdInput) {
+                    deleteIdInput.value = this.getAttribute('data-id');
+                }
+            });
+        });
+
+        const imageModal = document.getElementById('imageModal');
+        if (imageModal) {
+            imageModal.addEventListener('show.bs.modal', function(event) {
+                const button = event.relatedTarget;
+                const imageSrc = button.getAttribute('data-image');
+                const modalImage = document.getElementById('modalImage');
+                modalImage.src = imageSrc;
+            });
+        }
     });
 
-    document.querySelectorAll('.delete-btn').forEach(button => {
-        button.addEventListener('click', function() {
-            document.getElementById('deleteId').value = this.getAttribute('data-id');
-        });
-    });
-
-    const imageModal = document.getElementById('imageModal');
-    if (imageModal) {
-        imageModal.addEventListener('show.bs.modal', function(event) {
-            const button = event.relatedTarget;
-            const imageSrc = button.getAttribute('data-image');
-            const modalImage = document.getElementById('modalImage');
-            modalImage.src = imageSrc;
-        });
-    }
 </script>
 </body>
 </html>

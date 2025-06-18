@@ -23,30 +23,32 @@ public class DeleteComplaintServlet extends HttpServlet {
             return;
         }
 
-        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
-        String id = req.getParameter("cid");
-        if (id == null) {
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+        String cid = req.getParameter("cid");
+        if (cid == null || cid.trim().isEmpty()) {
+            resp.sendRedirect(req.getContextPath() + "/viewMyComplaints");
             return;
         }
+
+        String userId = String.valueOf(session.getAttribute("user_id"));
+        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
+
         try {
-            String cid = String.valueOf(Integer.parseInt(id));
-            String userId = (String) session.getAttribute("user_id");
-            if (!ComplaintModel.canUserUpdate(cid, userId,ds)) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
+            // Ensure user has rights to delete the complaint
+            if (!ComplaintModel.canUserUpdate(cid, userId, ds)) {
+                resp.sendRedirect(req.getContextPath() + "/viewMyComplaints");
                 return;
             }
-            boolean isDeleted = ComplaintModel.deleteComplaint(cid,ds);
-            if (isDeleted) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
+
+            boolean deleted = ComplaintModel.deleteComplaint(cid, ds);
+            if (deleted) {
+                resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?deleted=true");
             } else {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
+                resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?error=delete_failed");
             }
-        } catch (NumberFormatException e) {
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
-        }catch (Exception e) {
+
+        } catch (Exception e) {
             e.printStackTrace();
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?error=server_error");
         }
     }
 }
