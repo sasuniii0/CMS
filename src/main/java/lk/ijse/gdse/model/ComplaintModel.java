@@ -32,40 +32,35 @@ public class ComplaintModel {
         }
     }
 
-    public static List<ComplaintDTO> fetchComplaintsByEmployee(String userId, String role,String cid, BasicDataSource ds) {
-        List<ComplaintDTO> complaints = new ArrayList<>();
-        String sql;
+    public static List<ComplaintDTO> fetchComplaintsByEmployee(String userId, String role, BasicDataSource ds) throws SQLException {
+        System.out.println("Executing query for user: " + userId + ", role: " + role);
 
-        if ("admin".equalsIgnoreCase(role)) {
+        String sql = "SELECT * FROM complaints WHERE user_id = ?";
+        if ("admin".equals(role)) {
             sql = "SELECT * FROM complaints";
-        } else {
-            sql = "SELECT * FROM complaints WHERE user_id = ?";
         }
 
-        try{
-            Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement(sql);
+        try (Connection connection = ds.getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql)) {
 
-            if (!"admin".equalsIgnoreCase(role)) {
-                pstm.setInt(1, Integer.parseInt(userId));
+            if (!"admin".equals(role)) {
+                pstmt.setString(1, userId);
             }
 
-            ResultSet rst = pstm.executeQuery();
-            while (rst.next()) {
+            ResultSet rs = pstmt.executeQuery();
+            List<ComplaintDTO> complaints = new ArrayList<>();
+
+            while (rs.next()) {
                 ComplaintDTO complaint = new ComplaintDTO();
-                complaint.setCid(rst.getString("cid"));
-                complaint.setTitle(rst.getString("title"));
-                complaint.setImage(rst.getString("image"));
-                complaint.setDescription(rst.getString("description"));
-                complaint.setStatus(rst.getString("status"));
-                complaint.setRemarks(rst.getString("remarks"));
-                complaint.setUser_id(rst.getString("user_id"));
+                complaint.setCid(rs.getString("cid"));
+                complaint.setTitle(rs.getString("title"));
+                complaint.setUser_id(userId);
                 complaints.add(complaint);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+
+            System.out.println("Found " + complaints.size() + " complaints");
+            return complaints;
         }
-        return complaints;
     }
 
     public static boolean updateComplaint(ComplaintDTO complaint, BasicDataSource ds) {

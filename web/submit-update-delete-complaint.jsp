@@ -3,8 +3,17 @@
 <%@ page import="java.util.List" %>
 
 <%
-    List<ComplaintDTO> complaints = (List<ComplaintDTO>) request.getAttribute("complaints");
-    request.setAttribute("complaints", complaints);
+    /*// Prevent direct access to view.jsp without going through servlet
+    if (request.getAttribute("complaints") == null) {
+        response.sendRedirect(request.getContextPath() + "/viewMyComplaints");
+        return;
+    }*/
+
+    // Get user ID from session for additional security
+    if (session == null || session.getAttribute("user_id") == null) {
+        response.sendRedirect("index.jsp");
+        return;
+    }
 %>
 <!DOCTYPE html>
 <html lang="en">
@@ -125,9 +134,11 @@
     <div class="card shadow">
         <div class="card-header d-flex justify-content-between align-items-center">
             <h4 class="mb-0">My Complaints</h4>
-            <button class="btn btn-light btn-sm" data-bs-toggle="modal" data-bs-target="#addComplaintModal">
-                <i class="bi bi-plus-lg"></i> Add Complaint
-            </button>
+            <div>
+                <button class="btn add-btn btn-sm" data-bs-toggle="modal" data-bs-target="#addComplaintModal">
+                    <i class="bi bi-plus-circle"></i> Add Complaint
+                </button>
+            </div>
         </div>
         <div class="card-body">
             <div class="table-responsive">
@@ -143,48 +154,73 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <c:forEach var="complaint" items="${complaints}">
-                        <tr>
-                            <td>${complaint.title}</td>
-                            <td>
-                                <c:if test="${not empty complaint.image}">
-                                    <img src="data:image/jpeg;base64,${complaint.image}"
-                                         width="50"
-                                         data-bs-toggle="modal"
-                                         data-bs-target="#imageModal"
-                                         data-image="data:image/jpeg;base64,${complaint.image}" />
-                                </c:if>
-                            </td>
-                            <td title="${complaint.description}">${complaint.description}</td>
-                            <td>
-                                <span class="status-badge
-                                    ${complaint.status == 'PENDING' ? 'status-pending' :
-                                      complaint.status == 'RESOLVED' ? 'status-resolved' : 'status-rejected'}">
-                                        ${complaint.status}
-                                </span>
-                            </td>
-                            <td>${complaint.remarks}</td>
-                            <td>
-                                <button class="btn btn-sm btn-outline-primary edit-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#editComplaintModal"
-                                        data-id="${complaint.cid}"
-                                        data-userid="${complaint.user_id}"
-                                        data-title="${complaint.title}"
-                                        data-description="${complaint.description}"
-                                        data-status="${complaint.status}"
-                                        data-remarks="${complaint.remarks}">
-                                    <i class="bi bi-pencil"></i>
-                                </button>
-                                <button class="btn btn-sm btn-outline-danger delete-btn"
-                                        data-bs-toggle="modal"
-                                        data-bs-target="#deleteModal"
-                                        data-id="${complaint.cid}">
-                                    <i class="bi bi-trash"></i>
-                                </button>
-                            </td>
-                        </tr>
-                    </c:forEach>
+                    <%
+                        List<ComplaintDTO> complaints = (List<ComplaintDTO>) request.getAttribute("complaints");
+                        if (complaints == null || complaints.isEmpty()) {
+                    %>
+                    <tr>
+                        <td colspan="6" class="text-center">
+                            No complaints found.
+                        </td>
+                    </tr>
+                    <%
+                    } else {
+                        for (ComplaintDTO complaint : complaints) {
+                            String description = complaint.getDescription() != null ? complaint.getDescription() : "";
+                            String status = complaint.getStatus() != null ? complaint.getStatus() : "PENDING";
+                            String remarks = complaint.getRemarks() != null ? complaint.getRemarks() : "";
+                            String image = complaint.getImage() != null ? complaint.getImage() : "";
+                    %>
+                    <tr>
+                        <td><%= complaint.getTitle() != null ? complaint.getTitle() : "" %></td>
+                        <td>
+                            <% if (!image.isEmpty()) { %>
+                            <img src="data:image/jpeg;base64,<%= image %>"
+                                 width="50"
+                                 data-bs-toggle="modal"
+                                 data-bs-target="#imageModal"
+                                 data-image="data:image/jpeg;base64,<%= image %>" />
+                            <% } %>
+                        </td>
+                        <td title="<%= description %>">
+                            <%= description.length() > 50 ?
+                                    description.substring(0, 50) + "..." :
+                                    description %>
+                        </td>
+                        <td>
+                            <span class="status-badge
+                                <% if ("RESOLVED".equalsIgnoreCase(status)) { %>
+                                    status-resolved
+                                <% } else if ("REJECTED".equalsIgnoreCase(status)) { %>
+                                    status-rejected
+                                <% } else { %>
+                                    status-pending
+                                <% } %>">
+                                <%= status %>
+                            </span>
+                        </td>
+                        <td><%= remarks %></td>
+                        <td>
+                            <i class="bi bi-pencil-square edit-icon action-icon"
+                               data-bs-toggle="modal"
+                               data-bs-target="#editComplaintModal"
+                               data-id="<%= complaint.getCid() %>"
+                               data-userid="<%= complaint.getUser_id() %>"
+                               data-title="<%= complaint.getTitle() != null ? complaint.getTitle() : "" %>"
+                               data-description="<%= description %>"
+                               data-status="<%= status %>"
+                               data-remarks="<%= remarks %>"></i>
+
+                            <i class="bi bi-trash delete-icon action-icon"
+                               data-bs-toggle="modal"
+                               data-bs-target="#deleteModal"
+                               data-id="<%= complaint.getCid() %>"></i>
+                        </td>
+                    </tr>
+                    <%
+                            }
+                        }
+                    %>
                     </tbody>
                 </table>
             </div>
@@ -196,16 +232,16 @@
 <div class="modal fade" id="addComplaintModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="${pageContext.request.contextPath}/complaint?action=save" method="post" enctype="multipart/form-data">
+            <form action="${pageContext.request.contextPath}/complaint" method="post" enctype="multipart/form-data">
                 <div class="modal-header text-white">
                     <h5 class="modal-title fw-bold text-uppercase">
-                        📝 Submit a New Complaint
+                        <i class="bi bi-plus-circle"></i> Add New Complaint
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
-
                 <div class="modal-body">
-                    <input type="hidden" name="userId" value="${sessionScope.userId}">
+                    <input type="hidden" name="action" value="save">
+                    <input type="hidden" name="userId" value="${sessionScope.user_id}">
                     <div class="mb-3">
                         <label class="form-label">Title</label>
                         <input type="text" name="title" class="form-control" required>
@@ -220,8 +256,8 @@
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-light" type="submit">Submit</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Submit</button>
                 </div>
             </form>
         </div>
@@ -232,27 +268,28 @@
 <div class="modal fade" id="editComplaintModal" tabindex="-1">
     <div class="modal-dialog modal-lg">
         <div class="modal-content">
-            <form action="${pageContext.request.contextPath}/complaint?action=update" method="post" enctype="multipart/form-data">
-                <div class="modal-header  text-dark">
+            <form action="${pageContext.request.contextPath}/update-complaint" method="post" enctype="multipart/form-data">
+                <div class="modal-header">
                     <h5 class="modal-title fw-bold text-uppercase">
-                        ✏️ Edit Complaint
+                        <i class="bi bi-pencil-square"></i> Edit Complaint
                     </h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="editId" name="id">
+                    <input type="hidden" name="action" value="update">
+                    <input type="hidden" id="editId" name="cid">
                     <input type="hidden" id="editUserId" name="userId">
                     <div class="mb-3">
                         <label class="form-label">Title</label>
-                        <input type="text" id="editTitle" name="title" class="form-control">
+                        <input type="text" id="editTitle" name="title" class="form-control" required>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Description</label>
-                        <textarea id="editDescription" name="description" class="form-control" rows="3"></textarea>
+                        <textarea id="editDescription" name="description" class="form-control" rows="3" required></textarea>
                     </div>
                     <div class="mb-3">
                         <label class="form-label">Status</label>
-                        <select id="editStatus" name="status" class="form-select">
+                        <select id="editStatus" name="status" class="form-select" required>
                             <option value="PENDING">Pending</option>
                             <option value="RESOLVED">Resolved</option>
                             <option value="REJECTED">Rejected</option>
@@ -263,13 +300,13 @@
                         <textarea id="editRemarks" name="remarks" class="form-control" rows="2"></textarea>
                     </div>
                     <div class="mb-3">
-                        <label class="form-label">Update Image</label>
+                        <label class="form-label">Update Image (optional)</label>
                         <input type="file" name="image" class="form-control" accept="image/*">
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-primary" type="submit">Update</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-primary">Update</button>
                 </div>
             </form>
         </div>
@@ -280,20 +317,21 @@
 <div class="modal fade" id="deleteModal" tabindex="-1">
     <div class="modal-dialog">
         <div class="modal-content">
-            <form action="${pageContext.request.contextPath}/complaint?action=delete" method="post">
+            <form action="${pageContext.request.contextPath}/delete-complaint" method="post">
                 <div class="modal-header bg-danger text-white">
                     <h5 class="modal-title fw-bold text-uppercase">
-                        ❗ Confirm Delete
+                        <i class="bi bi-exclamation-triangle"></i> Confirm Delete
                     </h5>
                     <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
                 </div>
                 <div class="modal-body">
-                    <input type="hidden" id="deleteId" name="id">
-                    <p>Are you sure you want to delete this complaint?</p>
+                    <input type="hidden" name="action" value="delete">
+                    <input type="hidden" id="deleteId" name="cid">
+                    <p>Are you sure you want to delete this complaint? This action cannot be undone.</p>
                 </div>
                 <div class="modal-footer">
-                    <button class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
-                    <button class="btn btn-danger" type="submit">Delete</button>
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="btn btn-danger">Delete</button>
                 </div>
             </form>
         </div>

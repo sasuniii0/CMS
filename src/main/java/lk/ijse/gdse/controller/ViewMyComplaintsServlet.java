@@ -13,41 +13,42 @@ import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.awt.desktop.PrintFilesEvent;
 import java.io.IOException;
+import java.util.List;
 
 @MultipartConfig
 @WebServlet("/viewMyComplaints")
 public class ViewMyComplaintsServlet extends HttpServlet {
     @Override
-    protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest req, HttpServletResponse resp)
+            throws ServletException, IOException {
+
+        // 1. Get session and validate user
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
-            resp.sendRedirect("index.jsp");
+            resp.sendRedirect("index.jsp"); // Redirect to login if not authenticated
             return;
         }
 
-        String id = req.getParameter("id");
-        if (id == null) {
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
-            return;
-        }
-        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
-        try{
-            String  complaintId = String.valueOf(Integer.parseInt(id));
-            String  userId = (String) session.getAttribute("user_id");
-            String userRole = (String) session.getAttribute("role");
+        // 2. Get user info from session
+        String userId = session.getAttribute("user_id").toString();
+        String role = (String) session.getAttribute("role");
 
-            ComplaintDTO complaintDTO = (ComplaintDTO) ComplaintModel.fetchComplaintsByEmployee(complaintId,userRole,userId,ds);
-            if (complaintDTO == null) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard");
-            }
-            req.setAttribute("complaint", complaintDTO);
-            req.getRequestDispatcher("viewMyComplaints.jsp").forward(req, resp);
-        } catch (NumberFormatException e) {
-            e.printStackTrace();
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+        // 3. Get database connection pool
+        BasicDataSource ds = (BasicDataSource) getServletContext().getAttribute("ds");
+
+        try {
+            // 4. Fetch complaints from model
+            List<ComplaintDTO> complaints = ComplaintModel.fetchComplaintsByEmployee(userId, role, ds);
+
+            // 5. Set the complaints list in request attribute
+            req.setAttribute("complaints", complaints); // Must match what JSP expects
+
+            // 6. Forward to your JSP file
+            req.getRequestDispatcher("view.jsp").forward(req, resp);
+
         } catch (Exception e) {
             e.printStackTrace();
-            resp.sendRedirect(req.getContextPath() + "/dashboard");
+            resp.sendRedirect("error.jsp"); // Redirect to error page
         }
     }
 }
