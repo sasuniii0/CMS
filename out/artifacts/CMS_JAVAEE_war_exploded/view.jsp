@@ -149,6 +149,7 @@
                 <th>Description</th>
                 <th>Image</th>
                 <th>Status</th>
+                <th>Remarks</th>
                 <th>Actions</th>
               </tr>
               </thead>
@@ -173,20 +174,15 @@
                       <c:when test="${complaint.status == 'PENDING'}">
                         <span class="status-badge status-pending">Pending</span>
                       </c:when>
-                      <c:when test="${complaint.status == 'IN_PROGRESS'}">
-                        <span class="status-badge status-in-progress">In Progress</span>
-                      </c:when>
                       <c:when test="${complaint.status == 'RESOLVED'}">
                         <span class="status-badge status-resolved">Resolved</span>
-                      </c:when>
-                      <c:when test="${complaint.status == 'REJECTED'}">
-                        <span class="status-badge status-rejected">Rejected</span>
                       </c:when>
                       <c:otherwise>
                         <span class="status-badge">${complaint.status}</span>
                       </c:otherwise>
                     </c:choose>
                   </td>
+                    <td>${complaint.remarks != null ? complaint.remarks : 'No remarks'}</td>
                   <td>
                     <div class="d-flex gap-2">
                       <a href="${pageContext.request.contextPath}/update-complaint?cid=${complaint.cid}"
