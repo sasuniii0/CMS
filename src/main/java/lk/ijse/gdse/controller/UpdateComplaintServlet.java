@@ -41,7 +41,8 @@ public class UpdateComplaintServlet extends HttpServlet {
             }
 
             if (!ComplaintModel.canUserUpdate(cid, userId, ds)) {
-                resp.sendRedirect(req.getContextPath() + "/dashboard.jsp");
+                req.setAttribute("error", "You can only edit your own pending/in-progress complaints");
+                forwardToEdit(req, resp, cid, ds);
                 return;
             }
 

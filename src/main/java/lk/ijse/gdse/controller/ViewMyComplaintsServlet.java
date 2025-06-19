@@ -14,10 +14,14 @@ import org.apache.commons.dbcp2.BasicDataSource;
 import java.awt.desktop.PrintFilesEvent;
 import java.io.IOException;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 @MultipartConfig
 @WebServlet("/viewMyComplaints")
 public class ViewMyComplaintsServlet extends HttpServlet {
+
+    private static final Logger logger = Logger.getLogger(ViewMyComplaintsServlet.class.getName());
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
@@ -32,23 +36,23 @@ public class ViewMyComplaintsServlet extends HttpServlet {
         // 2. Get user info from session
         String userId = session.getAttribute("user_id").toString();
         String role = (String) session.getAttribute("role");
+        logger.info("Fetching complaints for user ID: " + userId + ", role: " + role);
+
 
         // 3. Get database connection pool
         BasicDataSource ds = (BasicDataSource) getServletContext().getAttribute("ds");
 
         try {
-            // 4. Fetch complaints from model
             List<ComplaintDTO> complaints = ComplaintModel.fetchComplaintsByEmployee(userId, role, ds);
+            logger.info("Found " + complaints.size() + " complaints");
 
-            // 5. Set the complaints list in request attribute
-            req.setAttribute("complaints", complaints); // Must match what JSP expects
-
-            // 6. Forward to your JSP file
+            req.setAttribute("complaints", complaints);
             req.getRequestDispatcher("view.jsp").forward(req, resp);
 
         } catch (Exception e) {
-            e.printStackTrace();
-            resp.sendRedirect("error.jsp"); // Redirect to error page
+            logger.log(Level.SEVERE, "Error fetching complaints", e);
+            req.setAttribute("error", "Error loading complaints: " + e.getMessage());
+            req.getRequestDispatcher("view.jsp").forward(req, resp);
         }
     }
 }

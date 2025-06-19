@@ -33,34 +33,27 @@ public class ComplaintModel {
     }
 
     public static List<ComplaintDTO> fetchComplaintsByEmployee(String userId, String role, BasicDataSource ds) throws SQLException {
-        System.out.println("Executing query for user: " + userId + ", role: " + role);
-
-        String sql = "SELECT * FROM complaints WHERE user_id = ?";
-        if ("admin".equals(role)) {
-            sql = "SELECT * FROM complaints";
-        }
+        List<ComplaintDTO> complaints = new ArrayList<>();
+        String sql = "SELECT title, image,description, status,remarks FROM complaints WHERE user_id = ? ORDER BY cid DESC";
 
         try (Connection connection = ds.getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(sql)) {
+             PreparedStatement pstm = connection.prepareStatement(sql)) {
 
-            if (!"admin".equals(role)) {
-                pstmt.setString(1, userId);
+            pstm.setString(1, userId);
+
+            try (ResultSet rs = pstm.executeQuery()) {
+                while (rs.next()) {
+                    ComplaintDTO dto = new ComplaintDTO();
+                    dto.setTitle(rs.getString("title"));
+                    dto.setDescription(rs.getString("description"));
+                    dto.setStatus(rs.getString("status"));
+                    dto.setImage(rs.getString("image"));
+                    dto.setRemarks(rs.getString("remarks"));
+                    complaints.add(dto);
+                }
             }
-
-            ResultSet rs = pstmt.executeQuery();
-            List<ComplaintDTO> complaints = new ArrayList<>();
-
-            while (rs.next()) {
-                ComplaintDTO complaint = new ComplaintDTO();
-                complaint.setCid(rs.getString("cid"));
-                complaint.setTitle(rs.getString("title"));
-                complaint.setUser_id(userId);
-                complaints.add(complaint);
-            }
-
-            System.out.println("Found " + complaints.size() + " complaints");
-            return complaints;
         }
+        return complaints;
     }
 
     public static boolean updateComplaint(ComplaintDTO complaint, BasicDataSource ds) {
@@ -124,20 +117,33 @@ public class ComplaintModel {
         return complaints;
     }
 
-    public static boolean canUserUpdate(String cid, String userId,BasicDataSource ds) {
-        try{
-            Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("SELECT COUNT(*) FROM complaints WHERE id = ? AND user_id = ? AND status != 'RESOLVED'");
+    public static boolean canUserUpdate(String cid, String userId, BasicDataSource ds) {
+        Connection connection = null;
+        PreparedStatement pstm = null;
+        ResultSet rst = null;
+
+        try {
+            connection = ds.getConnection();
+            pstm = connection.prepareStatement(
+                    "SELECT COUNT(*) FROM complaints WHERE cid = ? AND user_id = ? AND status != 'RESOLVED'"
+            );
             pstm.setString(1, cid);
             pstm.setString(2, userId);
-            ResultSet rst = pstm.executeQuery();
-            if (rst.next()) {
-                return rst.getInt(1) > 0;
-            }
+
+            rst = pstm.executeQuery();
+            return rst.next() && rst.getInt(1) > 0;
+
         } catch (SQLException e) {
-            throw new RuntimeException("Error checking user update permission: " + e.getMessage(), e);
+            // Log the error properly
+            System.err.println("Error checking user update permission for complaint " + cid +
+                    ", user " + userId + ": " + e.getMessage());
+            return false;
+        } finally {
+            // Close resources in reverse order
+            try { if (rst != null) rst.close(); } catch (SQLException e) { /* ignore */ }
+            try { if (pstm != null) pstm.close(); } catch (SQLException e) { /* ignore */ }
+            try { if (connection != null) connection.close(); } catch (SQLException e) { /* ignore */ }
         }
-        return false;
     }
 
     public static ComplaintDTO getComplaintById(String cid, BasicDataSource ds) {
