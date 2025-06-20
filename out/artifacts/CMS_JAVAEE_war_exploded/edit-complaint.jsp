@@ -17,13 +17,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Edit Complaint</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        .preview-image {
-            max-width: 300px;
-            max-height: 200px;
-            margin-top: 10px;
-        }
-    </style>
+    <link href="css/edit-complaint.css" rel="stylesheet">
 </head>
 <body class="bg-light py-5">
 <div class="container">
@@ -108,24 +102,8 @@
     </div>
 </div>
 
-<script>
-    // Image preview functionality
-    document.getElementById('image').addEventListener('change', function(e) {
-        const file = e.target.files[0];
-        if (file && file.type.startsWith('image/')) {
-            const reader = new FileReader();
-            reader.onload = function(event) {
-                const preview = document.getElementById('imagePreview');
-                preview.innerHTML = `<p>New Image Preview:</p>
-                                   <img src="${event.target.result}"
-                                        class="img-thumbnail preview-image"
-                                        alt="Preview of new image">`;
-            };
-            reader.readAsDataURL(file);
-        }
-    });
-</script>
 
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/edit-complaint.js" type="module" ></script>
 </body>
 </html>

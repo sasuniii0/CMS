@@ -21,63 +21,7 @@
     <title>Confirm Deletion | Complaint</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        :root {
-            --glass-color: rgba(255, 255, 255, 0.1);
-            --glass-border: 1px solid rgba(255, 255, 255, 0.2);
-            --glass-blur: blur(14px);
-            --glass-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-        }
-
-        body {
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            min-height: 100vh;
-            color: white;
-            padding-top: 5rem;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .glass-card {
-            background: var(--glass-color);
-            border: var(--glass-border);
-            backdrop-filter: var(--glass-blur);
-            -webkit-backdrop-filter: var(--glass-blur);
-            box-shadow: var(--glass-shadow);
-            border-radius: 16px;
-            padding: 2rem;
-            max-width: 600px;
-            width: 100%;
-        }
-
-        .btn-glass {
-            background: rgba(255, 255, 255, 0.1);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-            color: white;
-            border-radius: 50px;
-            padding: 0.4rem 1.2rem;
-            transition: all 0.3s ease;
-        }
-
-        .btn-glass:hover {
-            background: rgba(255, 255, 255, 0.3);
-            color: white;
-        }
-
-        .alert-danger {
-            background-color: rgba(255, 0, 0, 0.15);
-            color: #ff6b6b;
-            border: 1px solid rgba(255, 255, 255, 0.15);
-            border-radius: 12px;
-        }
-
-        h4, h5 {
-            color: #fff;
-        }
-
-    </style>
+    <link rel="stylesheet" href="css/delete-complaint.css">
 </head>
 <body>
 

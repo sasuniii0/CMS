@@ -5,50 +5,8 @@
     <title>LogIn</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.6/dist/css/bootstrap.min.css" rel="stylesheet"
           integrity="sha384-4Q6Gf2aSP4eDXB8Miphtr37CMZZQ5oXLH2yaXMJ2w8e2ZtHTl7GptT4jmndRuHDT" crossorigin="anonymous">
-    <style>
-        body {
-            background: url("assets/login-bg.jpg") no-repeat center center fixed;
-            background-size: cover;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-        }
+    <link rel="stylesheet" href="css/index.css">
 
-        .glass-card {
-            max-width: 400px;
-            margin: 100px auto;
-            padding: 30px;
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 16px;
-            box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
-            backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
-            border: 1px solid rgba(255, 255, 255, 0.18);
-            color: white;
-        }
-        .form-control {
-            background-color: rgba(255, 255, 255, 0.1);
-            border: none;
-            color: #fff;
-        }
-
-        .form-control::placeholder {
-            color: #ccc;
-        }
-
-        h1 {
-            text-align: center;
-            color: #fff;
-            margin-bottom: 30px;
-        }
-
-        .btn-info {
-            background-color: rgba(0, 123, 255, 0.7);
-            border: none;
-        }
-
-        .btn-info:hover {
-            background-color: rgba(0, 123, 255, 0.9);
-        }
-    </style>
 </head>
 <body>
 

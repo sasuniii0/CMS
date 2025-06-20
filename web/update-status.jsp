@@ -30,42 +30,8 @@
 <head>
     <title>Update Complaint Status</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
-    <style>
-        body {
-            background-color: #f8f9fa;
-            padding: 2rem;
-        }
-        .complaint-card {
-            max-width: 700px;
-            margin: 0 auto;
-            box-shadow: 0 0.5rem 1rem rgba(0, 0, 0, 0.15);
-            border-radius: 0.5rem;
-        }
-        .status-badge {
-            font-size: 0.85rem;
-            padding: 0.35rem 0.65rem;
-            border-radius: 0.25rem;
-        }
-        .badge-pending {
-            background-color: #ffc107;
-        }
-        .badge-resolved {
-            background-color: #28a745;
-            color: white;
-        }
-        .badge-rejected {
-            background-color: #dc3545;
-            color: white;
-        }
-        .readonly-field {
-            background-color: #e9ecef;
-            cursor: not-allowed;
-        }
-        .form-text {
-            font-size: 0.875rem;
-            color: #6c757d;
-        }
-    </style>
+    <link rel="stylesheet" href="css/update.css">
+
 </head>
 <body>
 <div class="container">
@@ -128,42 +94,7 @@
         </div>
     </div>
 </div>
-
-<!-- Form validation -->
-<script>
-    document.querySelector('form').addEventListener('submit', function(e) {
-        const remarks = document.getElementById('remarks').value.trim();
-        if (remarks === '') {
-            e.preventDefault();
-            alert('Remarks field is required');
-            document.getElementById('remarks').focus();
-        }
-    });
-
-    document.getElementById('status').addEventListener('change', function() {
-        const status = this.value;
-        const remarks = document.getElementById('remarks');
-        if (status === 'resolved' || status === 'rejected') {
-            remarks.disabled = false;
-        } else {
-            remarks.disabled = true;
-            remarks.value = '';
-        }
-        remarks.focus();
-        remarks.select();
-    })
-
-        document.ready(function() {
-            const status = document.getElementById('status').value;
-            const remarks = document.getElementById('remarks');
-            if (status === 'resolved' || status === 'rejected') {
-
-                remarks.disabled = false;
-            } else {
-                remarks.disabled = true;
-                remarks.value = '';
-            }
-        })
-</script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script src="js/update.js" type="module"></script>
 </body>
 </html>

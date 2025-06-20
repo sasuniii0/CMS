@@ -14,57 +14,8 @@
     <title>Submit Complaint</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
-    <style>
-        body {
-            padding-top: 50px;
-            background: linear-gradient(135deg, #667eea, #764ba2);
-            min-height: 100vh;
-            color: #fff;
-            font-family: 'Segoe UI', sans-serif;
-            backdrop-filter: blur(4px);
-        }
-        .card {
-            background: rgba(255, 255, 255, 0.08);
-            border-radius: 16px;
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            backdrop-filter: blur(14px);
-            -webkit-backdrop-filter: blur(14px);
-            color: white;
-            box-shadow: 0 8px 32px rgba(0, 0, 0, 0.35);
-        }
-        .card-header {
-            border-bottom: 1px solid rgba(255, 255, 255, 0.15);
-        }
-        .form-control, .form-select {
-            background-color: rgba(255, 255, 255, 0.05);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-            color: white;
-        }
-        .form-control::placeholder {
-            color: rgba(255, 255, 255, 0.6);
-        }
-        .btn-light {
-            background-color: #a29bfe;
-            color: #fff;
-            border: none;
-        }
-        .btn-light:hover {
-            background-color: #6c5ce7;
-        }
-        .btn-outline-primary {
-            border-color: #a29bfe;
-            color: #a29bfe;
-        }
-        .btn-outline-primary:hover {
-            background-color: #a29bfe;
-            color: #fff;
-        }
-        .alert-danger {
-            background-color: rgba(255, 107, 107, 0.2);
-            border-color: rgba(255, 107, 107, 0.3);
-            color: #ff6b6b;
-        }
-    </style>
+    <link rel="stylesheet" href="css/submit-complaint.css">
+
 </head>
 <body>
 <div class="container">
