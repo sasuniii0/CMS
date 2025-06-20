@@ -75,6 +75,27 @@ A synchronous, form-based complaint management system built with **Jakarta EE**,
 
 ---
 
+##🖼️ Screenshots
+### 🔐 Sign Up Page[signin](images/signin.png)
+
+### 🔐 Sign Up Page[signup](images/signup.png)
+
+### 🔐 Admin Dashboard Page[admin-dashboard](images/admindash.png)
+
+### 🔐 All Complaints View[all-complaints ](images/allcomplainttable.png)
+
+### 🔐 Update Complaint[update-complaints](images/updatecomplaint.png)
+
+### 🔐 Delete Complaint[delete-complaints](images/deletecomplaint.png)
+
+### 👤 Employee Dashboard[employee-dashboard](images/employeedash.png)
+
+### 📝 Submit New Complaint[submit-complaint](images/submitcomplaint.png)
+
+### 📋 View Employee-vise Complaints[view-employeevise-complaints](images/getall.png)
+
+
+
 ## ⚙️ Installation
 
 ### Prerequisites
@@ -86,3 +107,34 @@ A synchronous, form-based complaint management system built with **Jakarta EE**,
 ```bash
 git clone https://github.com/yourusername/complaint-management-system.git
 cd complaint-management-system
+```
+
+###Step 2: Configure Tomcat
+Deploy the generated WAR file into the webapps folder, or
+
+Use your IDE (IntelliJ, Eclipse) to run the project with Tomcat.
+
+###Step 3: Install Dependencies (if using Maven)
+###Step 4: Build the Project
+
+🛢️ Database Setup
+1. Create the Database
+2. Create Tables
+3. Configure DB Connection
+
+
+---
+
+### ✅ Final Notes:
+
+- Replace `yourusername` in the Git URL with your actual GitHub username.
+- Replace `'hashed_password_here'` with a real hashed password.
+- Upload your screenshots to the `images/` folder and rename accordingly.
+- Ensure the servlet mappings match your actual project URLs.
+
+Let me know if you’d like a version with clickable links for GitHub or a PDF export.
+
+
+
+
+
