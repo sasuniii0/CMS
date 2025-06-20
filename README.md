@@ -109,13 +109,13 @@ git clone https://github.com/yourusername/complaint-management-system.git
 cd complaint-management-system
 ```
 
-###Step 2: Configure Tomcat
+### Step 2: Configure Tomcat
 Deploy the generated WAR file into the webapps folder, or
 
 Use your IDE (IntelliJ, Eclipse) to run the project with Tomcat.
 
-###Step 3: Install Dependencies (if using Maven)
-###Step 4: Build the Project
+### Step 3: Install Dependencies (if using Maven)
+### Step 4: Build the Project
 
 🛢️ Database Setup
 1. Create the Database
