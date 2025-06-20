@@ -126,35 +126,25 @@ public class ComplaintModel {
     }
 
     public static boolean canUserUpdate(String cid, String userId, BasicDataSource ds) {
-        Connection connection = null;
-        PreparedStatement pstm = null;
-        ResultSet rst = null;
+        try (Connection con = ds.getConnection();
+             PreparedStatement stmt = con.prepareStatement("SELECT user_id FROM complaints WHERE cid = ?")) {
 
-        try {
-            connection = ds.getConnection();
-            pstm = connection.prepareStatement(
-                    "SELECT COUNT(*) FROM complaints WHERE cid = ? AND user_id = ? AND status != 'RESOLVED'"
-            );
-            pstm.setString(1, cid);
-            pstm.setString(2, userId);
-
-            rst = pstm.executeQuery();
-            return rst.next() && rst.getInt(1) > 0;
-
-        } catch (SQLException e) {
-            // Log the error properly
-            System.err.println("Error checking user update permission for complaint " + cid +
-                    ", user " + userId + ": " + e.getMessage());
-            return false;
-        } finally {
-            // Close resources in reverse order
-            try { if (rst != null) rst.close(); } catch (SQLException e) { /* ignore */ }
-            try { if (pstm != null) pstm.close(); } catch (SQLException e) { /* ignore */ }
-            try { if (connection != null) connection.close(); } catch (SQLException e) { /* ignore */ }
+            stmt.setString(1, cid);
+            ResultSet rs = stmt.executeQuery();
+            if (rs.next()) {
+                String ownerId = rs.getString("user_id");
+                return ownerId != null && ownerId.equals(userId);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+        return false;
     }
 
+
     public static ComplaintDTO getComplaintById(String cid, BasicDataSource ds) {
+        System.out.println("Fetching complaint with cid: " + cid); // Debug log
+
         if (cid == null || cid.trim().isEmpty()) {
             throw new IllegalArgumentException("Complaint ID cannot be null or empty");
         }

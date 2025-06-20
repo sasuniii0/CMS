@@ -106,6 +106,7 @@
       <div class="alert alert-danger alert-dismissible fade show mb-4">
         <c:choose>
           <c:when test="${error == 'delete_failed'}">Failed to delete complaint. Please try again.</c:when>
+          <c:when test="${error == 'unauthorized'}">You are not authorized to perform this action.</c:when>
           <c:otherwise>An error occurred: <%= error %></c:otherwise>
         </c:choose>
         <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
@@ -126,16 +127,19 @@
       </div>
       <% } %>
 
+
+
       <div class="card shadow mb-4">
         <div class="card-header d-flex justify-content-between align-items-center">
           <h4 class="mb-0"><i class="bi bi-list-ul"></i> My Complaints</h4>
           <div>
-            <form action="${pageContext.request.contextPath}/viewMyComplaints" method="get" class="d-inline">
-              <button type="submit" class="btn btn-secondary me-2">
-                <i class="bi bi-arrow-clockwise"></i> Load Complaints
-              </button>
-            </form>
-            <a href="${pageContext.request.contextPath}/submit-complaint.jsp" class="btn btn-primary">
+            <a href="${pageContext.request.contextPath}/dashboard.jsp" class="btn btn-info me-2">
+              <i class="bi bi-back"></i> Back to dashboard
+            </a>
+            <a href="${pageContext.request.contextPath}/viewMyComplaints" class="btn btn-secondary me-2">
+              <i class="bi bi-arrow-clockwise"></i> Refresh
+            </a>
+            <a href="${pageContext.request.contextPath}/submit-complaint.jsp" class="btn btn-primary me-2">
               <i class="bi bi-plus-circle"></i> New Complaint
             </a>
           </div>
@@ -156,7 +160,6 @@
               <tbody>
               <c:forEach var="complaint" items="${complaints}">
                 <tr>
-
                   <td>${complaint.title}</td>
                   <td>${complaint.description}</td>
                   <td>
@@ -182,18 +185,27 @@
                       </c:otherwise>
                     </c:choose>
                   </td>
-                    <td>${complaint.remarks != null ? complaint.remarks : 'No remarks'}</td>
+                  <td>${complaint.remarks != null ? complaint.remarks : 'No remarks'}</td>
                   <td>
                     <div class="d-flex gap-2">
-                      <a href="${pageContext.request.contextPath}/update-complaint?cid=${complaint.cid}"
-                         class="btn btn-sm btn-primary">
+
+                      <button type="button"
+                              class="btn btn-sm btn-primary"
+                              data-bs-toggle="modal"
+                              data-bs-target="#updateComplaintModal"
+                              onclick="fillUpdateModal('${complaint.cid}', '${complaint.title}', `${complaint.description}`, '${complaint.status}', `${complaint.remarks}`)">
                         <i class="bi bi-pencil"></i> Edit
-                      </a>
-                      <a href="${pageContext.request.contextPath}/delete-complaint?cid=${complaint.cid}"
-                         class="btn btn-sm btn-danger"
-                         onclick="return confirm('Are you sure you want to delete this complaint?');">
-                        <i class="bi bi-trash"></i> Delete
-                      </a>
+                      </button>
+
+
+
+                      <form action="${pageContext.request.contextPath}/delete-complaint" method="post" style="display: inline;">
+                        <input type="hidden" name="cid" value="${complaint.cid}">
+                        <button type="submit" class="btn btn-danger me-md-2"
+                                onclick="return confirm('Are you sure you want to delete this complaint?');">
+                          <i class="bi bi-trash"></i> Delete Complaint
+                        </button>
+                      </form>
                     </div>
                   </td>
                 </tr>
@@ -207,6 +219,67 @@
   </div>
 </div>
 
+<<div class="modal fade" id="updateComplaintModal" tabindex="-1" aria-hidden="true">
+  <div class="modal-dialog modal-lg">
+    <div class="modal-content text-white" style="background: #333;">
+      <form action="${pageContext.request.contextPath}/update-complaint" method="post" enctype="multipart/form-data">
+        <div class="modal-header">
+          <h5 class="modal-title">Update Complaint</h5>
+          <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" name="cid" id="modalCid">
+
+          <div class="mb-3">
+            <label class="form-label">Title</label>
+            <input type="text" name="title" id="modalTitle" class="form-control" required>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Description</label>
+            <textarea name="description" id="modalDescription" class="form-control" rows="5" required></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Status</label>
+            <select name="status" id="modalStatus" class="form-select" required>
+              <option value="PENDING">Pending</option>
+              <option value="RESOLVED">Resolved</option>
+            </select>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Remarks</label>
+            <textarea name="remarks" id="modalRemarks" class="form-control" rows="3"></textarea>
+          </div>
+
+          <div class="mb-3">
+            <label class="form-label">Update Image (optional)</label>
+            <input type="file" name="image" class="form-control" accept="image/*">
+            <small class="text-muted">Leave blank to keep current image</small>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="submit" class="btn btn-primary">Update</button>
+          <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
+        </div>
+      </form>
+    </div>
+  </div>
+</div>
+
 <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script>
+  function fillUpdateModal(cid, title, description, status, remarks) {
+    console.log("CID passed to modal:", cid); // ✅ Check in browser console
+    document.getElementById("modalCid").value = cid;
+    document.getElementById("modalTitle").value = title;
+    document.getElementById("modalDescription").value = description;
+    document.getElementById("modalStatus").value = status;
+    document.getElementById("modalRemarks").value = remarks;
+  }
+
+
+</script>
 </body>
 </html>
