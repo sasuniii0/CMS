@@ -1,235 +1,88 @@
-Complaint Management System (CMS)
+# Complaint Management System (CMS)
 
-A synchronous, form-based complaint management system built with Jakarta EE, following the MVC architecture. This system allows employees to submit and manage complaints while providing administrators with tools to oversee and resolve them.
-Table of Contents
+A synchronous, form-based complaint management system built with **Jakarta EE**, following the **MVC architecture**. This system allows **employees** to submit and manage complaints, while providing **administrators** with tools to oversee and resolve them.
 
-Features
-Technology Stack
-Architecture
-Installation
-Database Setup
-Usage
-API Endpoints
-Screenshots
-License
+---
 
-Features
-Authentication Module
+## 📑 Table of Contents
 
-User Login: Secure login with session management.
-Role-Based Access Control:
-Employee: Submit and manage personal complaints.
-Admin: Manage all complaints and users.
+- [Features](#features)
+- [Technology Stack](#technology-stack)
+- [Architecture](#architecture)
+- [Installation](#installation)
+- [Database Setup](#database-setup)
+- [Usage](#usage)
+- [API Endpoints](#api-endpoints)
+- [Screenshots](#screenshots)
+- [License](#license)
 
+---
 
+## ✅ Features
 
-Complaint Management
-Employee Role
+### 🔐 Authentication Module
+- **User Login**: Secure login with session management.
+- **Role-Based Access Control**:
+  - **Employee**: Submit and manage personal complaints.
+  - **Admin**: Manage all complaints and users.
 
-Submit new complaints.
-View personal complaint list.
-Edit or delete unresolved complaints.
+### 📝 Complaint Management
 
-Admin Role
+#### Employee Role
+- Submit new complaints.
+- View personal complaint list.
+- Edit or delete unresolved complaints.
 
-View all complaints across the system.
-Update complaint status (OPEN/RESOLVED).
-Add administrative remarks to complaints.
-Delete any complaint.
+#### Admin Role
+- View all complaints.
+- Update complaint status (OPEN/RESOLVED).
+- Add remarks to any complaint.
+- Delete any complaint.
 
-Technology Stack
-Frontend:
+---
 
-JSP (JavaServer Pages)
-HTML5
-CSS3
-JavaScript (for form validation only)
+## 💻 Technology Stack
 
-Backend:
+### Frontend
+- JSP (JavaServer Pages)
+- HTML5, CSS3
+- JavaScript (only for form validation)
 
-Jakarta EE 9.1
-Servlets
-JSP Standard Tag Library (JSTL)
+### Backend
+- Jakarta EE 9.1 (Servlets, JSP, JSTL)
+- Apache Commons DBCP 2.9.0
 
-Database:
+### Database
+- MySQL 8.0+
 
-MySQL 8.0
-Apache Commons DBCP 2.9.0 (connection pooling)
+### Server
+- Apache Tomcat 10.0.x
 
-Server:
+---
 
-Apache Tomcat 10.0.x
+## 🧱 Architecture
 
-Architecture
-MVC Pattern
+### MVC Pattern
 
-Model: Plain Old Java Objects (POJOs) and Data Access Object (DAO) classes for data handling.
-View: JSP pages for rendering the user interface.
-Controller: Servlets to handle requests and manage application flow.
+- **Model**: DTOs and DAO classes (e.g., `ComplaintDTO`, `ComplaintModel`)
+- **View**: JSP pages
+- **Controller**: Servlets (e.g., `LoginServlet`, `DashboardServlet`, `ComplaintServlet`)
 
-HTTP Method Enforcement
+### HTTP Method Usage
+- `POST`: For state-changing operations (submit, update, delete)
+- `GET`: For read-only operations (login page, dashboard, list)
+- **No AJAX**: Fully synchronous form submissions
 
-POST: Used for all state-changing operations (e.g., submitting or updating complaints) via HTML forms.
-GET: Used for read-only operations (e.g., viewing complaint lists).
-No AJAX: The system uses synchronous form submissions, avoiding asynchronous mechanisms.
+---
 
-Installation
+## ⚙️ Installation
 
-Prerequisites:
+### Prerequisites
+- Java JDK 17+
+- Apache Tomcat 10.0.x
+- MySQL 8.0+
 
-Java JDK 17 or higher
-Apache Tomcat 10.0.x
-MySQL 8.0 or higher
-
-
-Clone the Repository:
+### Step 1: Clone the Repository
+```bash
 git clone https://github.com/yourusername/complaint-management-system.git
 cd complaint-management-system
-
-
-Configure Tomcat:
-
-Deploy the project WAR file to the Tomcat webapps directory or configure your IDE (e.g., IntelliJ IDEA, Eclipse) to run the project on Tomcat.
-
-
-Install Dependencies:
-
-Ensure the following libraries are included in your project (typically via Maven):
-Jakarta EE 9.1 API
-Apache Commons DBCP 2.9.0
-MySQL Connector/J
-
-
-
-Example pom.xml snippet for Maven:
-<dependencies>
-    <dependency>
-        <groupId>jakarta.platform</groupId>
-        <artifactId>jakarta.jakartaee-api</artifactId>
-        <version>9.1.0</version>
-        <scope>provided</scope>
-    </dependency>
-    <dependency>
-        <groupId>org.apache.commons</groupId>
-        <artifactId>commons-dbcp2</artifactId>
-        <version>2.9.0</version>
-    </dependency>
-    <dependency>
-        <groupId>mysql</groupId>
-        <artifactId>mysql-connector-java</artifactId>
-        <version>8.0.33</version>
-    </dependency>
-</dependencies>
-
-
-Build the Project:
-
-If using Maven, run:mvn clean package
-
-
-Deploy the generated WAR file to Tomcat.
-
-
-
-Database Setup
-
-Create the Database:
-
-Log in to MySQL and create a database:CREATE DATABASE cms_db;
-
-
-
-
-Create Tables:
-
-Execute the following SQL to create the necessary tables:USE cms_db;
-
-CREATE TABLE users (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    username VARCHAR(50) NOT NULL UNIQUE,
-    password VARCHAR(255) NOT NULL,
-    role ENUM('EMPLOYEE', 'ADMIN') NOT NULL
-);
-
-CREATE TABLE complaints (
-    id INT AUTO_INCREMENT PRIMARY KEY,
-    user_id INT,
-    title VARCHAR(100) NOT NULL,
-    description TEXT NOT NULL,
-    status ENUM('OPEN', 'RESOLVED') DEFAULT 'OPEN',
-    remarks TEXT,
-    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
-    FOREIGN KEY (user_id) REFERENCES users(id)
-);
-
-
-
-
-Configure Database Connection:
-
-Update the database connection settings in your project’s configuration file (e.g., context.xml for Tomcat or a properties file).
-Example context.xml:<Resource name="jdbc/cmsDB" auth="Container"
-          type="javax.sql.DataSource"
-          maxTotal="100" maxIdle="30" maxWaitMillis="10000"
-          username="your_mysql_username" password="your_mysql_password"
-          driverClassName="com.mysql.cj.jdbc.Driver"
-          url="jdbc:mysql://localhost:3306/cms_db?useSSL=false&serverTimezone=UTC"/>
-
-
-
-
-Seed Initial Data (Optional):
-
-Insert an admin user for testing:INSERT INTO users (username, password, role) VALUES ('admin', 'hashed_password_here', 'ADMIN');
-
-
-
-
-
-Usage
-
-Start the Server:
-
-Launch Apache Tomcat:./apache-tomcat-10.0.x/bin/startup.sh  # Unix/Linux/Mac
-.\apache-tomcat-10.0.x\bin\startup.bat  # Windows
-
-
-
-
-Access the Application:
-
-Open a browser and navigate to http://localhost:8080/complaint-management-system.
-Log in with a registered user (employee or admin).
-
-
-Employee Workflow:
-
-Log in with an employee account.
-Navigate to the "Submit Complaint" page to create a new complaint.
-View or edit your complaints from the dashboard.
-
-
-Admin Workflow:
-
-Log in with an admin account.
-Access the admin dashboard to view all complaints.
-Update complaint statuses or add remarks as needed.
-
-
-
-API Endpoints
-The system uses form-based submissions, not RESTful APIs, but the following servlet mappings handle requests:
-
-GET /login: Displays the login page.
-POST /login: Authenticates users and starts a session.
-GET /dashboard: Shows the user dashboard (employee or admin).
-POST /complaints/submit: Submits a new complaint (employee only).
-GET /complaints: Lists complaints (employee: own complaints; admin: all complaints).
-POST /complaints/update: Updates complaint status or remarks (admin only).
-POST /complaints/delete: Deletes a complaint (employee: own unresolved; admin: any).
-
-Screenshots
-
-Note: Ensure the above images are uploaded to the images/ folder in your repository. Replace the filenames with the actual image names if different.
-License
-This project is licensed under the MIT License. See the LICENSE file for details.
