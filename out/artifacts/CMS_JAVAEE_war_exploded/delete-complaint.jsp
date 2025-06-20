@@ -88,7 +88,7 @@
         <p>This action is irreversible and will permanently remove the complaint from the system.</p>
     </div>
 
-    <form action="delete-any-complaint" method="post">
+    <form action="${pageContext.request.contextPath}/delete-any-complaint" method="post">
         <input type="hidden" name="cid" value="<%= cid %>">
         <div class="d-flex justify-content-between mt-4">
             <a href="viewAllComplaints" class="btn-glass">
