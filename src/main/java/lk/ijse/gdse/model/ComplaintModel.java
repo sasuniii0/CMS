@@ -93,26 +93,29 @@ public class ComplaintModel {
 
     }
 
-    public static List<ComplaintDTO> getAllComplaints(BasicDataSource ds) {
-        List<ComplaintDTO> complaints = new ArrayList<>();
+    public static List<ComplaintDTO> getAllComplaints(BasicDataSource ds) throws SQLException {
+        if (ds == null) {
+            throw new IllegalArgumentException("DataSource cannot be null");
+        }
 
-        try{
-            Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM complaints");
-            ResultSet rst = pstm.executeQuery();
+        List<ComplaintDTO> complaints = new ArrayList<>();
+        String sql = "SELECT cid, title, description, image, status, remarks, user_id FROM complaints";
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(sql);
+             ResultSet rst = pstm.executeQuery()) {
+
             while (rst.next()) {
                 ComplaintDTO complaint = new ComplaintDTO();
                 complaint.setCid(rst.getString("cid"));
                 complaint.setTitle(rst.getString("title"));
-                complaint.setImage(rst.getString("image"));
                 complaint.setDescription(rst.getString("description"));
+                complaint.setImage(rst.getString("image"));
                 complaint.setStatus(rst.getString("status"));
                 complaint.setRemarks(rst.getString("remarks"));
                 complaint.setUser_id(rst.getString("user_id"));
                 complaints.add(complaint);
             }
-        } catch (SQLException e) {
-            throw new RuntimeException("Error fetching all complaints: " + e.getMessage(), e);
         }
         return complaints;
     }
@@ -147,29 +150,42 @@ public class ComplaintModel {
     }
 
     public static ComplaintDTO getComplaintById(String cid, BasicDataSource ds) {
-        try{
-            Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("SELECT * FROM complaints WHERE cid = ?");
-            pstm.setString(1, cid);
-            ResultSet rst = pstm.executeQuery();
-            if (rst.next()) {
-                ComplaintDTO complaint = new ComplaintDTO();
-                complaint.setCid(rst.getString("cid"));
-                complaint.setTitle(rst.getString("title"));
-                complaint.setImage(rst.getString("image"));
-                complaint.setDescription(rst.getString("description"));
-                complaint.setStatus(rst.getString("status"));
-                complaint.setRemarks(rst.getString("remarks"));
-                complaint.setUser_id(rst.getString("user_id"));
-                return complaint;
+        if (cid == null || cid.trim().isEmpty()) {
+            throw new IllegalArgumentException("Complaint ID cannot be null or empty");
+        }
+
+        try (Connection connection = ds.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(
+                     "SELECT cid, title, description, image, status, remarks, user_id " +
+                             "FROM complaints WHERE cid = ?")) {
+
+            try {
+                pstm.setInt(1, Integer.parseInt(cid));
+            } catch (NumberFormatException e) {
+                pstm.setString(1, cid);
+            }
+
+            try (ResultSet rst = pstm.executeQuery()) {
+                if (rst.next()) {
+                    ComplaintDTO complaint = new ComplaintDTO();
+                    complaint.setCid(rst.getString("cid"));
+                    complaint.setTitle(rst.getString("title"));
+                    complaint.setDescription(rst.getString("description"));
+                    complaint.setImage(rst.getString("image"));
+                    complaint.setStatus(rst.getString("status"));
+                    complaint.setRemarks(rst.getString("remarks"));
+                    complaint.setUser_id(rst.getString("user_id"));
+                    return complaint;
+                }
+                return null; // Explicit return null if not found
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error fetching complaint by ID: " + e.getMessage(), e);
+            throw new RuntimeException("Error fetching complaint with ID " + cid + ": " +
+                    e.getMessage(), e);
         }
-        return null;
     }
 
-    public static void updateStatusAndRemarks(String cid, String status, String remarks,BasicDataSource ds) {
+    public static boolean updateStatusAndRemarks(String cid, String status, String remarks, BasicDataSource ds) {
         try{
             Connection connection = ds.getConnection();
             PreparedStatement pstm = connection.prepareStatement(
@@ -183,6 +199,18 @@ public class ComplaintModel {
             }
         } catch (SQLException e) {
             throw new RuntimeException("Error updating complaint status and remark: " + e.getMessage(), e);
+        }
+        return false;
+    }
+
+
+    public static int deleteComplaintByCid(String cid, BasicDataSource ds) throws SQLException {
+        try (Connection conn = ds.getConnection();
+             PreparedStatement pstm = conn.prepareStatement(
+                     "DELETE FROM complaints WHERE cid = ?")) {
+
+            pstm.setString(1, cid);
+            return pstm.executeUpdate();
         }
     }
 }
