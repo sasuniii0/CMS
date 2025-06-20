@@ -17,6 +17,7 @@ import java.io.IOException;
 public class DeleteComplaintServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
             resp.sendRedirect(req.getContextPath() + "/index.jsp");
@@ -29,7 +30,10 @@ public class DeleteComplaintServlet extends HttpServlet {
             return;
         }
 
-        String userId = String.valueOf(session.getAttribute("user_id"));
+        req.setAttribute("cid", cid);
+        req.getRequestDispatcher("/edit-complaint.jsp").forward(req, resp);
+
+        /*String userId = String.valueOf(session.getAttribute("user_id"));
         BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
 
         try {
@@ -49,6 +53,37 @@ public class DeleteComplaintServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?error=server_error");
+        }*/
+
+    }
+
+    @Override
+    protected void doPost(HttpServletRequest req, HttpServletResponse resp) throws ServletException, IOException {
+        HttpSession httpSession = req.getSession(false);
+
+        if (httpSession== null || httpSession.getAttribute("user_id") == null) resp.sendRedirect(req.getContextPath() + "/index.jsp");
+
+        String cid = req.getParameter("cid");
+        if (cid == null || cid.trim().isEmpty()) {
+            resp.sendRedirect(req.getContextPath() + "/viewMyComplaints");
+            return;
         }
+
+        BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
+
+        try{
+            int isDeleted = ComplaintModel.deleteComplaint(cid,ds);
+            if (isDeleted > 0) {
+                resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?deleted=true");
+            } else {
+                resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?error=delete_failed");
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            resp.sendRedirect(req.getContextPath() + "/viewMyComplaints?error=server_error");
+        }
+
+        req.setAttribute("cid", cid);
+        req.getRequestDispatcher("/edit-complaint.jsp").forward(req, resp);
     }
 }

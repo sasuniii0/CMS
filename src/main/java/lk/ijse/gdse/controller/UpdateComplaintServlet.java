@@ -24,7 +24,7 @@ public class UpdateComplaintServlet extends HttpServlet {
             return;
         }
 
-        String cid = req.getParameter("id"); // Corrected: this matches hidden input name in form
+        String cid = req.getParameter("id");
         String title = req.getParameter("title");
         String description = req.getParameter("description");
         String status = req.getParameter("status");
@@ -54,17 +54,14 @@ public class UpdateComplaintServlet extends HttpServlet {
             dto.setRemarks(remarks != null ? remarks.trim() : "");
             dto.setUser_id(userId);
 
-            // Image upload handling
             Part imagePart = req.getPart("image");
             if (imagePart != null && imagePart.getSize() > 0) {
-                // Convert to Base64
                 try (InputStream inputStream = imagePart.getInputStream()) {
                     byte[] imageBytes = inputStream.readAllBytes();
                     String base64Image = Base64.getEncoder().encodeToString(imageBytes);
                     dto.setImage(base64Image);
                 }
             } else {
-                // Retain existing image if no new image provided
                 ComplaintDTO existing = ComplaintModel.getComplaintById(cid, ds);
                 dto.setImage(existing != null ? existing.getImage() : null);
             }

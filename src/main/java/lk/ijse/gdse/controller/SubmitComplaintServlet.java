@@ -42,12 +42,13 @@ public class SubmitComplaintServlet extends HttpServlet {
         }
 
         try {
+            String cid = req.getParameter("uid");
             String title = req.getParameter("title");
             String description = req.getParameter("description");
             Part filePart = req.getPart("image");
-            Integer userId = (Integer) session.getAttribute("user_id");
+            String userId = (String) session.getAttribute("user_id"); // Must be String
 
-            // Validate required fields
+            System.out.println(cid + " " + title + " " + description + " " + userId);
             if (title == null || title.trim().isEmpty() ||
                     description == null || description.trim().isEmpty()) {
                 req.setAttribute("error", "Title and description are required");
@@ -56,12 +57,12 @@ public class SubmitComplaintServlet extends HttpServlet {
             }
 
             ComplaintDTO complaint = new ComplaintDTO();
+            complaint.setCid(cid);
             complaint.setTitle(title.trim());
             complaint.setDescription(description.trim());
-            complaint.setUser_id(userId.toString());
+            complaint.setUser_id(userId);
             complaint.setStatus("PENDING"); // Default status
 
-            // Handle file upload if present
             if (filePart != null && filePart.getSize() > 0) {
                 String fileName = UUID.randomUUID() + "_" + filePart.getSubmittedFileName();
                 String uploadPath = getServletContext().getRealPath("/assets");

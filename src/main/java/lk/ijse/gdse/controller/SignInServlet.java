@@ -36,7 +36,7 @@ public class SignInServlet extends HttpServlet {
         } else {
             System.out.println("User authenticated successfully");
 
-            int userId = UserModel.getUserIdByEmail(email, ds);
+            String userId = UserModel.getUserIdByEmail(email, ds);
             System.out.println("Fetched userId: " + userId);
 
             HttpSession session = req.getSession();

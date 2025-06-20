@@ -26,20 +26,17 @@ public class ViewMyComplaintsServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // 1. Get session and validate user
         HttpSession session = req.getSession(false);
         if (session == null || session.getAttribute("user_id") == null) {
-            resp.sendRedirect("index.jsp"); // Redirect to login if not authenticated
+            resp.sendRedirect("index.jsp");
             return;
         }
 
-        // 2. Get user info from session
         String userId = session.getAttribute("user_id").toString();
         String role = (String) session.getAttribute("role");
         logger.info("Fetching complaints for user ID: " + userId + ", role: " + role);
 
 
-        // 3. Get database connection pool
         BasicDataSource ds = (BasicDataSource) getServletContext().getAttribute("ds");
 
         try {

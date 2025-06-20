@@ -21,16 +21,14 @@ public class UpdateStatusServlet extends HttpServlet {
     protected void doGet(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // 1. Get and validate CID
         String cid = req.getParameter("cid");
-        System.out.println("Editing complaint: " + cid); // Debug log
+        System.out.println("Editing complaint: " + cid);
 
         if (cid == null || cid.trim().isEmpty()) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Missing complaint ID");
             return;
         }
 
-        // 2. Fetch complaint
         BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
         ComplaintDTO complaint;
         try {
@@ -45,7 +43,6 @@ public class UpdateStatusServlet extends HttpServlet {
             return;
         }
 
-        // 3. Forward to edit page
         req.setAttribute("complaint", complaint);
         req.getRequestDispatcher("update-status.jsp").forward(req, resp);
     }
@@ -54,14 +51,12 @@ public class UpdateStatusServlet extends HttpServlet {
     protected void doPost(HttpServletRequest req, HttpServletResponse resp)
             throws ServletException, IOException {
 
-        // 1. Verify admin session
         HttpSession session = req.getSession(false);
         if (session == null || !"admin".equals(session.getAttribute("role"))) {
             resp.sendRedirect("index.jsp");
             return;
         }
 
-        // 2. Get and validate all parameters
         String cid = req.getParameter("cid");
         String status = req.getParameter("status");
         String remarks = req.getParameter("remarks");
@@ -72,23 +67,19 @@ public class UpdateStatusServlet extends HttpServlet {
             return;
         }
 
-        // 3. Validate status value
         if (!List.of("pending", "resolved", "rejected").contains(status)) {
             resp.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid status value");
             return;
         }
 
-        // 4. Process the update
         BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
         try {
             boolean updated = ComplaintModel.updateStatusAndRemarks(cid, status, remarks, ds);
 
             if (updated) {
-                // Success - redirect with success message
                 session.setAttribute("success", "Complaint updated successfully");
                 resp.sendRedirect("viewAllComplaints");
             } else {
-                // No rows affected - complaint not found
                 session.setAttribute("error", "Complaint not found");
                 resp.sendRedirect("viewAllComplaints");
             }

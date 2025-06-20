@@ -20,19 +20,14 @@ public class ViewAllComplaintsServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // 1. Get DataSource from servlet context
             BasicDataSource ds = (BasicDataSource) req.getServletContext().getAttribute("ds");
 
-            // 2. Fetch complaints from model
             List<ComplaintDTO> allComplaints = ComplaintModel.getAllComplaints(ds);
 
-            // 3. Log for debugging
             System.out.println("Number of complaints fetched: " + allComplaints.size());
 
-            // 4. Set attribute for JSP
             req.setAttribute("complaintsList", allComplaints);
 
-            // 5. Forward to JSP
             req.getRequestDispatcher("view-all-complaints.jsp").forward(req, resp);
 
         } catch (Exception e) {

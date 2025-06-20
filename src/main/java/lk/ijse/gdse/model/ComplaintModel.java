@@ -3,32 +3,37 @@ package lk.ijse.gdse.model;
 import lk.ijse.gdse.dto.ComplaintDTO;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+
 public class ComplaintModel {
     public static boolean submitComplaint(ComplaintDTO complaint, BasicDataSource ds) {
-        try{
-            Connection connection = ds.getConnection();
-            PreparedStatement pstm = connection.prepareStatement("INSERT INTO complaints (cid, title, image, description, status, remarks, user_id) " +
-                    "VALUES (?, ?, ?, ?, ?, ?, ?)");
+        try (Connection connection = ds.getConnection();
+             PreparedStatement pstm = connection.prepareStatement(
+                     "INSERT INTO complaints (cid, title, description, image, status,remarks, user_id) " +
+                             "VALUES (?, ?, ?, ?, ?, ?,?)")) {
 
-            String id = UUID.randomUUID().toString();
-            pstm.setString(1, id);
+            if (complaint.getCid() == null || complaint.getCid().isEmpty()) {
+                complaint.setCid(UUID.randomUUID().toString());
+            }
+            //System.out.println(complaint.getCid());
+
+            pstm.setString(1, complaint.getCid());
             pstm.setString(2, complaint.getTitle());
-            pstm.setString(3, complaint.getImage());
-            pstm.setString(4, complaint.getDescription());
+            pstm.setString(3, complaint.getDescription());
+            pstm.setString(4, complaint.getImage());
             pstm.setString(5, complaint.getStatus());
             pstm.setString(6, complaint.getRemarks());
             pstm.setString(7, complaint.getUser_id());
+
             return pstm.executeUpdate() > 0;
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            throw new RuntimeException("Error submitting complaint", e);
+
         }
     }
 
@@ -81,12 +86,12 @@ public class ComplaintModel {
         }
     }
 
-    public static boolean deleteComplaint(String cid,BasicDataSource ds) {
+    public static int deleteComplaint(String cid,BasicDataSource ds) {
         try (Connection connection = ds.getConnection();
              PreparedStatement pstm = connection.prepareStatement("DELETE FROM complaints WHERE cid = ?")) {
 
             pstm.setString(1, cid);
-            return pstm.executeUpdate() > 0;
+            return pstm.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Error deleting complaint: " + e.getMessage(), e);
         }
@@ -159,11 +164,8 @@ public class ComplaintModel {
                      "SELECT cid, title, description, image, status, remarks, user_id " +
                              "FROM complaints WHERE cid = ?")) {
 
-            try {
-                pstm.setInt(1, Integer.parseInt(cid));
-            } catch (NumberFormatException e) {
-                pstm.setString(1, cid);
-            }
+            pstm.setString(1, cid);  // Important: Use setString not setInt
+
 
             try (ResultSet rst = pstm.executeQuery()) {
                 if (rst.next()) {

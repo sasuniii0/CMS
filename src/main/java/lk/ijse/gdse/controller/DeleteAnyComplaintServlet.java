@@ -26,7 +26,7 @@ public class DeleteAnyComplaintServlet extends HttpServlet {
         }
 
         String cid = req.getParameter("cid");
-        System.out.println("[GET] Received CID: " + cid); // Debug log
+        System.out.println("[GET] Received CID: " + cid);
         if (cid == null || cid.trim().isEmpty()) {
             resp.sendRedirect("viewAllComplaints?error=missing_id");
             return;
@@ -47,7 +47,7 @@ public class DeleteAnyComplaintServlet extends HttpServlet {
         }
 
         String cid = req.getParameter("cid");
-        System.out.println("[POST] Attempting to delete CID: " + cid); // Debug log
+        System.out.println("[POST] Attempting to delete CID: " + cid);
 
         if (cid == null || cid.trim().isEmpty()) {
             session.setAttribute("error", "No complaint ID provided");
