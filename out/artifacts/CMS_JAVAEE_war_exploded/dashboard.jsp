@@ -154,17 +154,17 @@
             <div class="col-md-4">
                 <a href="view.jsp" class="text-decoration-none">
                     <div class="action-card" id="view">
-                        <h4><i class="bi bi-collection me-2"></i>My Complaints</h4>
-                        <p class="mb-0 text-white-50">View your submitted complaints</p>
+                        <h4><i class="bi bi-pencil me-2"></i>Edit/Delete</h4>
+                        <p class="mb-0 text-white-50">Manage your existing complaints</p>
                     </div>
                 </a>
             </div>
 
             <div class="col-md-4">
-                <a href="edit-complaint.jsp" class="text-decoration-none">
+                <a href="${pageContext.request.contextPath}/viewMyComplaints" class="text-decoration-none">
                     <div class="action-card" id="update">
-                        <h4><i class="bi bi-pencil me-2"></i>Edit/Delete</h4>
-                        <p class="mb-0 text-white-50">Manage your existing complaints</p>
+                        <h4><i class="bi bi-collection me-2"></i>My Complaints</h4>
+                        <p class="mb-0 text-white-50">View your submitted complaints</p>
                     </div>
                 </a>
             </div>

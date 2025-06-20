@@ -6,7 +6,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lk.ijse.gdse.dto.UserDTO;
+import lk.ijse.gdse.bean.UserDTO;
 import lk.ijse.gdse.model.UserModel;
 import org.apache.commons.dbcp2.BasicDataSource;
 

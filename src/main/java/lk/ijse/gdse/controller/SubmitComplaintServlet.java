@@ -1,19 +1,16 @@
 package lk.ijse.gdse.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import jakarta.servlet.ServletContext;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.*;
-import lk.ijse.gdse.dto.ComplaintDTO;
+import lk.ijse.gdse.bean.ComplaintDTO;
 import lk.ijse.gdse.model.ComplaintModel;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 @MultipartConfig

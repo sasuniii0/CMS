@@ -1,4 +1,4 @@
-<%@ page import="lk.ijse.gdse.dto.ComplaintDTO" %>
+<%@ page import="lk.ijse.gdse.bean.ComplaintDTO" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <%
     // Admin authorization check

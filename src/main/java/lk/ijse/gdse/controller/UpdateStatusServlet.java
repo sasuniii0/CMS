@@ -1,13 +1,12 @@
 package lk.ijse.gdse.controller;
 
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lk.ijse.gdse.dto.ComplaintDTO;
+import lk.ijse.gdse.bean.ComplaintDTO;
 import lk.ijse.gdse.model.ComplaintModel;
 import org.apache.commons.dbcp2.BasicDataSource;
 

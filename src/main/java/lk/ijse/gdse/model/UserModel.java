@@ -1,6 +1,6 @@
 package lk.ijse.gdse.model;
 
-import lk.ijse.gdse.dto.UserDTO;
+import lk.ijse.gdse.bean.UserDTO;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.Connection;

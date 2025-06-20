@@ -1,4 +1,4 @@
-package lk.ijse.gdse.dto;
+package lk.ijse.gdse.bean;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;

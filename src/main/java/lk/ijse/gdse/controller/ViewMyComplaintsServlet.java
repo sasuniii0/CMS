@@ -7,11 +7,10 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import lk.ijse.gdse.dto.ComplaintDTO;
+import lk.ijse.gdse.bean.ComplaintDTO;
 import lk.ijse.gdse.model.ComplaintModel;
 import org.apache.commons.dbcp2.BasicDataSource;
 
-import java.awt.desktop.PrintFilesEvent;
 import java.io.IOException;
 import java.util.List;
 import java.util.logging.Level;
@@ -43,10 +42,13 @@ public class ViewMyComplaintsServlet extends HttpServlet {
             List<ComplaintDTO> complaints = ComplaintModel.fetchComplaintsByEmployee(userId, role, ds);
             logger.info("Found " + complaints.size() + " complaints");
 
-            req.setAttribute("complaints", complaints);
+            req.setAttribute("complaint", complaints);
             req.getRequestDispatcher("view.jsp").forward(req, resp);
 
         } catch (Exception e) {
+/*
+            System.out.println("Error fetching complaints: " + e.getMessage());
+*/
             logger.log(Level.SEVERE, "Error fetching complaints", e);
             req.setAttribute("error", "Error loading complaints: " + e.getMessage());
             req.getRequestDispatcher("view.jsp").forward(req, resp);

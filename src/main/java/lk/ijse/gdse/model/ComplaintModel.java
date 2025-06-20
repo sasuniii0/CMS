@@ -1,6 +1,6 @@
 package lk.ijse.gdse.model;
 
-import lk.ijse.gdse.dto.ComplaintDTO;
+import lk.ijse.gdse.bean.ComplaintDTO;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.sql.*;
@@ -127,13 +127,14 @@ public class ComplaintModel {
 
     public static boolean canUserUpdate(String cid, String userId, BasicDataSource ds) {
         try (Connection con = ds.getConnection();
-             PreparedStatement stmt = con.prepareStatement("SELECT user_id FROM complaints WHERE cid = ?")) {
+             PreparedStatement stmt = con.prepareStatement("SELECT user_id,status FROM complaints WHERE cid = ?")) {
 
             stmt.setString(1, cid);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 String ownerId = rs.getString("user_id");
-                return ownerId != null && ownerId.equals(userId);
+                String status = rs.getString("status");
+                return ownerId != null && ownerId.equals(userId) && "PENDING".equals(status);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -143,10 +144,11 @@ public class ComplaintModel {
 
 
     public static ComplaintDTO getComplaintById(String cid, BasicDataSource ds) {
-        System.out.println("Fetching complaint with cid: " + cid); // Debug log
+        // Add validation
+        System.out.println("Searching for complaint with ID: " + cid);
 
         if (cid == null || cid.trim().isEmpty()) {
-            throw new IllegalArgumentException("Complaint ID cannot be null or empty");
+            throw new IllegalArgumentException("Complaint ID is null or empty");
         }
 
         try (Connection connection = ds.getConnection();
@@ -154,8 +156,7 @@ public class ComplaintModel {
                      "SELECT cid, title, description, image, status, remarks, user_id " +
                              "FROM complaints WHERE cid = ?")) {
 
-            pstm.setString(1, cid);  // Important: Use setString not setInt
-
+            pstm.setString(1, cid.trim());
 
             try (ResultSet rst = pstm.executeQuery()) {
                 if (rst.next()) {
@@ -168,12 +169,14 @@ public class ComplaintModel {
                     complaint.setRemarks(rst.getString("remarks"));
                     complaint.setUser_id(rst.getString("user_id"));
                     return complaint;
+                } else {
+                    System.out.println("No complaint found with ID: " + cid);
+                    return null; // Or throw specific exception
                 }
-                return null; // Explicit return null if not found
             }
         } catch (SQLException e) {
-            throw new RuntimeException("Error fetching complaint with ID " + cid + ": " +
-                    e.getMessage(), e);
+            System.err.println("SQL Error searching for complaint ID " + cid + ": " + e.getMessage());
+            throw new RuntimeException("Database error", e);
         }
     }
 

@@ -1,17 +1,15 @@
 package lk.ijse.gdse.controller;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import lk.ijse.gdse.dto.UserDTO;
+import lk.ijse.gdse.bean.UserDTO;
 import lk.ijse.gdse.model.UserModel;
 import org.apache.commons.dbcp2.BasicDataSource;
 
 import java.io.IOException;
-import java.util.Map;
 import java.util.UUID;
 
 @WebServlet("/signup")
